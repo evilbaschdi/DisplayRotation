@@ -1,2 +1,2 @@
 # DisplayRotation
-Tool for rotating a display out of the notification bar because of amd and nvidia cards do not have shortcuts like intel to do that.
+Tool for rotating a display directly from the windows notification bar because of AMD or Nvidia gpu drivers do not offer shortcuts like Intel drivers to do that.
