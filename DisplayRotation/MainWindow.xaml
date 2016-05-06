@@ -6,7 +6,23 @@
                       xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
                       mc:Ignorable="d" GlowBrush="{DynamicResource AccentColorBrush}"
                       Title="Change Rotation" Width="1000" Height="200" Icon="b.ico">
-
+    <!--  RightWindowCommands  -->
+    <controls:MetroWindow.RightWindowCommands>
+        <controls:WindowCommands>
+            <!--  Settings  -->
+            <Button Click="ToggleSettingsFlyoutClick">
+                <StackPanel Orientation="Horizontal">
+                    <Rectangle Width="20" Height="20"
+                               Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}">
+                        <Rectangle.OpacityMask>
+                            <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_settings}" />
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
+                    <TextBlock Margin="5 0 0 0" VerticalAlignment="Center" Text="Settings" />
+                </StackPanel>
+            </Button>
+        </controls:WindowCommands>
+    </controls:MetroWindow.RightWindowCommands>
     <Grid>
         <StackPanel>
             <StackPanel Orientation="Horizontal" MaxHeight="55px" VerticalAlignment="Top" CanHorizontallyScroll="True">
@@ -17,4 +33,49 @@
             <StackPanel x:Name="DisplayStackPanel" Orientation="Horizontal" CanHorizontallyScroll="True" />
         </StackPanel>
     </Grid>
+    <controls:MetroWindow.Flyouts>
+        <controls:FlyoutsControl>
+            <!--  Settings Flyout  -->
+            <controls:Flyout Name="SettingsFlyout" Width="600" AnimateOnPositionChange="True" AnimateOpacity="True"
+                             Header="Settings" Position="Right" Theme="Accent" Foreground="White">
+                <StackPanel>
+                    <!--Application Style-->
+                    <StackPanel>
+                        <!-- Theme -->
+                        <StackPanel Margin="10,0,0,0" Orientation="Horizontal">
+                            <Label Foreground="White" Width="60" Margin="0,5,0,0" HorizontalAlignment="Left"
+                                   VerticalAlignment="Top" Content="Theme" />
+                            <controls:ToggleSwitch Foreground="White" Name="ThemeSwitch" Margin="10,1,0,0"
+                                                   HorizontalAlignment="Left" VerticalAlignment="Top"
+                                                   FontSize="12" IsCheckedChanged="Theme"
+                                                   OnSwitchBrush="{DynamicResource AccentColorBrush}" OnLabel="Dark"
+                                                   OffSwitchBrush="{DynamicResource AccentColorBrush}" OffLabel="Light" />
+                        </StackPanel>
+                        <!-- Accent -->
+                        <StackPanel Margin="10,5,0,0" Orientation="Horizontal">
+                            <Label Foreground="White" Width="60" Margin="0,5,0,0" HorizontalAlignment="Left"
+                                   VerticalAlignment="Top" Content="Accent" />
+                            <ComboBox Name="Accent" Width="505" Margin="10,5,0,0" HorizontalAlignment="Left"
+                                      VerticalAlignment="Top" SelectionChanged="AccentOnSelectionChanged" />
+                        </StackPanel>
+                        <!-- Save Style -->
+                        <StackPanel Margin="10,5,0,0" Orientation="Horizontal">
+                            <Button Name="SaveStyle" Width="505" Margin="70,5,0,0" Click="SaveStyleClick">
+                                <StackPanel Orientation="Horizontal">
+                                    <Rectangle Width="16" Height="16"
+                                               Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}">
+                                        <Rectangle.OpacityMask>
+                                            <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_save}" />
+                                        </Rectangle.OpacityMask>
+                                    </Rectangle>
+                                    <TextBlock Margin="5,0,0,0" VerticalAlignment="Center" Text="save style" />
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+            </controls:Flyout>
+        </controls:FlyoutsControl>
+    </controls:MetroWindow.Flyouts>
+
 </controls:MetroWindow>
