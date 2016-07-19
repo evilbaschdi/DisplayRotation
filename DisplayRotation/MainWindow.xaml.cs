@@ -28,8 +28,8 @@ namespace DisplayRotation
         {
             _coreSettings = new CoreSettings();
             InitializeComponent();
-            _style = new MetroStyleByToggleSwitch(this, Accent, ThemeSwitch, _coreSettings);
-            _style.Load(true, false);
+            _style = new MetroStyle(this, Accent, ThemeSwitch, _coreSettings);
+            _style.Load(true);
             var activeDevices = new ActiveDevices();
             _rotateDisplay = new RotateDisplay();
             BuildDeviceButtons(activeDevices);
@@ -85,8 +85,8 @@ namespace DisplayRotation
         {
             foreach (
                 var childButton in
-                    DisplayStackPanel.Children.Cast<Canvas>()
-                                     .SelectMany(childCanvas => childCanvas.Children.Cast<Button>()))
+                DisplayStackPanel.Children.Cast<Canvas>()
+                                 .SelectMany(childCanvas => childCanvas.Children.Cast<Button>()))
             {
                 childButton.BorderBrush = BtnClockwise.BorderBrush;
                 childButton.Foreground = BtnClockwise.Foreground;
@@ -129,8 +129,8 @@ namespace DisplayRotation
 
             foreach (
                 var nonactiveFlyout in
-                    Flyouts.Items.Cast<Flyout>()
-                           .Where(nonactiveFlyout => nonactiveFlyout.IsOpen && nonactiveFlyout.Name != activeFlyout.Name))
+                Flyouts.Items.Cast<Flyout>()
+                       .Where(nonactiveFlyout => nonactiveFlyout.IsOpen && nonactiveFlyout.Name != activeFlyout.Name))
             {
                 nonactiveFlyout.IsOpen = false;
             }

@@ -39,10 +39,6 @@
     <ApplicationIcon>b.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-     <ProjectReference Include="..\..\EvilBaschdi.Core\EvilBaschdi.Core\EvilBaschdi.Core.csproj">
-      <Project>{8a06a423-244f-404f-aad8-53de2ee2aed7}</Project>
-      <Name>EvilBaschdi.Core</Name>
-    </ProjectReference>
     <Reference Include="MahApps.Metro, Version=1.2.4.0, Culture=neutral, PublicKeyToken=f4fb5a3c4d1e5b4f, processorArchitecture=MSIL">
       <Private>True</Private>
       <HintPath>..\packages\MahApps.Metro.1.2.4.0\lib\net45\MahApps.Metro.dll</HintPath>
@@ -146,6 +142,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Entypo-license.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\EvilBaschdi.Core\EvilBaschdi.Core\EvilBaschdi.Core.csproj">
+      <Project>{8a06a423-244f-404f-aad8-53de2ee2aed7}</Project>
+      <Name>EvilBaschdi.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
