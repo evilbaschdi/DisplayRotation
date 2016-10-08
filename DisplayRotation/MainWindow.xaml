@@ -25,53 +25,83 @@
     </controls:MetroWindow.RightWindowCommands>
     <Grid>
         <StackPanel>
-            <StackPanel Orientation="Horizontal" MaxHeight="55px" VerticalAlignment="Top" CanHorizontallyScroll="True">
-                <Button Content="Rotate Clock Wise" Margin="5" x:Name="BtnClockwise" Click="BtnClockwise_OnClick" />
-                <Button Content="Rotate Anti Clock Wise" Margin="5" x:Name="BtnAntiClock" Click="BtnAntiClock_OnClick" />
-                <Button Content="Rotate Reset" Margin="5" x:Name="BtnReset" Click="BtnReset_OnClick" />
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Top" CanHorizontallyScroll="True">
+                <Button x:Name="BtnClockwise" Margin="10,10,0,0" Height="30" Width="150" Click="BtnClockwise_OnClick">
+                    <StackPanel Orientation="Horizontal">
+                        <Rectangle Width="16" Height="16" Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}">
+                            <Rectangle.OpacityMask>
+                                <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_chevron_right}" />
+                            </Rectangle.OpacityMask>
+                        </Rectangle>
+                        <TextBlock Margin="5 0 0 0" VerticalAlignment="Center" Text="Clockwise" />
+                    </StackPanel>
+                </Button>
+
+                <Button x:Name="BtnAntiClock" Margin="10,10,0,0" Height="30" Width="150" Click="BtnAntiClock_OnClick">
+                    <StackPanel Orientation="Horizontal">
+                        <Rectangle Width="16" Height="16" Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}">
+                            <Rectangle.OpacityMask>
+                                <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_chevron_left}" />
+                            </Rectangle.OpacityMask>
+                        </Rectangle>
+                        <TextBlock Margin="5 0 0 0" VerticalAlignment="Center" Text="Anticlockwise" />
+                    </StackPanel>
+                </Button>
+
+                <Button x:Name="BtnReset" Margin="10,10,0,0" Height="30" Width="150" Click="BtnReset_OnClick">
+                    <StackPanel Orientation="Horizontal">
+                        <Rectangle Width="16" Height="16" Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}">
+                            <Rectangle.OpacityMask>
+                                <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_close}" />
+                            </Rectangle.OpacityMask>
+                        </Rectangle>
+                        <TextBlock Margin="5 0 0 0" VerticalAlignment="Center" Text="Reset" />
+                    </StackPanel>
+                </Button>
             </StackPanel>
-            <StackPanel x:Name="DisplayStackPanel" Orientation="Horizontal" CanHorizontallyScroll="True" />
+            <StackPanel x:Name="DisplayStackPanel" Orientation="Horizontal" CanHorizontallyScroll="True" Margin="0,10,0,0" />
         </StackPanel>
     </Grid>
+    <!--  Flyouts  -->
     <controls:MetroWindow.Flyouts>
         <controls:FlyoutsControl>
             <!--  Settings Flyout  -->
-            <controls:Flyout Name="SettingsFlyout" Width="600" AnimateOnPositionChange="True" AnimateOpacity="True"
-                             Header="Settings" Position="Right" Theme="Accent" Foreground="White">
+            <controls:Flyout Name="SettingsFlyout" Width="250" AnimateOnPositionChange="True" AnimateOpacity="True" Header="settings" Position="Right" Theme="Accent">
                 <StackPanel>
-                    <!--Application Style-->
-                    <StackPanel>
-                        <!-- Theme -->
-                        <StackPanel Margin="10,0,0,0" Orientation="Horizontal">
-                            <Label Foreground="White" Width="60" Margin="0,5,0,0" HorizontalAlignment="Left"
-                                   VerticalAlignment="Top" Content="Theme" />
-                            <controls:ToggleSwitch Foreground="White" Name="ThemeSwitch" Margin="10,1,0,0"
-                                                   HorizontalAlignment="Left" VerticalAlignment="Top"
-                                                   FontSize="12" IsCheckedChanged="Theme"
-                                                   OnSwitchBrush="{DynamicResource AccentColorBrush}" OnLabel="Dark"
-                                                   OffSwitchBrush="{DynamicResource AccentColorBrush}" OffLabel="Light" />
-                        </StackPanel>
-                        <!-- Accent -->
-                        <StackPanel Margin="10,5,0,0" Orientation="Horizontal">
-                            <Label Foreground="White" Width="60" Margin="0,5,0,0" HorizontalAlignment="Left"
-                                   VerticalAlignment="Top" Content="Accent" />
-                            <ComboBox Name="Accent" Width="505" Margin="10,5,0,0" HorizontalAlignment="Left"
-                                      VerticalAlignment="Top" SelectionChanged="AccentOnSelectionChanged" />
-                        </StackPanel>
-                        <!-- Save Style -->
-                        <StackPanel Margin="10,5,0,0" Orientation="Horizontal">
-                            <Button Name="SaveStyle" Width="505" Margin="70,5,0,0" Click="SaveStyleClick">
-                                <StackPanel Orientation="Horizontal">
-                                    <Rectangle Width="16" Height="16"
-                                               Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}">
-                                        <Rectangle.OpacityMask>
-                                            <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_save}" />
-                                        </Rectangle.OpacityMask>
-                                    </Rectangle>
-                                    <TextBlock Margin="5,0,0,0" VerticalAlignment="Center" Text="save style" />
-                                </StackPanel>
-                            </Button>
-                        </StackPanel>
+                    <!-- Theme -->
+                    <StackPanel Margin="10,5,0,0" Orientation="Horizontal">
+                        <Label Width="50" Margin="0,5,0,0" HorizontalAlignment="Left"
+                               VerticalAlignment="Top" Content="Theme" />
+                        <controls:ToggleSwitch Name="ThemeSwitch" Margin="10,1,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="12" IsCheckedChanged="Theme"
+                                               OnSwitchBrush="{DynamicResource AccentColorBrush}" OnLabel="Dark"
+                                               OffSwitchBrush="{DynamicResource AccentColorBrush}" OffLabel="Light" />
+                    </StackPanel>
+                    <!-- Accent -->
+                    <StackPanel Margin="10,5,0,0" Orientation="Horizontal">
+                        <Label Width="50" Margin="0,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Accent:" />
+                        <ComboBox Name="Accent" Width="165" Margin="10,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" SelectionChanged="AccentOnSelectionChanged" />
+                    </StackPanel>
+                    <!-- Save Style -->
+                    <StackPanel Margin="10,5,0,0" Orientation="Horizontal">
+                        <Button Name="SaveStyle" Width="165" Margin="60,5,0,0" Click="SaveStyleClick">
+                            <StackPanel Orientation="Horizontal">
+                                <Rectangle Width="16" Height="16" Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}">
+                                    <Rectangle.OpacityMask>
+                                        <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_save}" />
+                                    </Rectangle.OpacityMask>
+                                </Rectangle>
+                                <TextBlock Margin="5,0,0,0" VerticalAlignment="Center" Text="save style" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                    <!-- Horizontal Line -->
+                    <StackPanel Margin="0,10,0,0" Orientation="Vertical">
+                        <Rectangle Width="220" VerticalAlignment="Stretch" Stroke="{DynamicResource AccentColorBrush}" />
+                    </StackPanel>
+                    <!-- Build / Linker Time -->
+                    <StackPanel Orientation="Horizontal">
+                        <Label Width="50" Margin="10,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Build" />
+                        <Label Width="310" Margin="5,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Name="LinkerTime" />
                     </StackPanel>
                 </StackPanel>
             </controls:Flyout>

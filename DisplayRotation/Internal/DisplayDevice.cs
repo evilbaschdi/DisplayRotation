@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 namespace DisplayRotation.Internal
 {
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-    internal struct DisplayDevice
+    public struct DisplayDevice
     {
         [MarshalAs(UnmanagedType.U4)] public int cb;
 

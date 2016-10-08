@@ -15,29 +15,11 @@ namespace DisplayRotation.Internal
 
             NativeMethods.EnumDisplayDevices(null, deviceId, ref displayDevice, 0);
             if (0 != NativeMethods.EnumDisplaySettings(
-                displayDevice.DeviceName, NativeMethods.EnumCurrentSettings, ref devMode))
+                    displayDevice.DeviceName, NativeMethods.EnumCurrentSettings, ref devMode))
             {
                 int temp = devMode.dmPelsHeight;
                 devMode.dmPelsHeight = devMode.dmPelsWidth;
                 devMode.dmPelsWidth = temp;
-
-                //switch(devMode.dmDisplayOrientation)
-                //{
-                //    case NativeMethods.DmdoDefault:
-                //        devMode.dmDisplayOrientation = NativeMethods.Dmdo270;
-                //        break;
-
-                //    case NativeMethods.Dmdo270:
-                //        devMode.dmDisplayOrientation = NativeMethods.Dmdo180;
-                //        break;
-
-                //    case NativeMethods.Dmdo180:
-                //        devMode.dmDisplayOrientation = NativeMethods.Dmdo90;
-                //        break;
-
-                //    case NativeMethods.Dmdo90:
-                //        devMode.dmDisplayOrientation = NativeMethods.DmdoDefault;
-                //        break;
             }
 
             devMode.dmDisplayOrientation = rotation;

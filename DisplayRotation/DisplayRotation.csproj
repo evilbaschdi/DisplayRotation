@@ -42,6 +42,10 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EvilBaschdi.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\EvilBaschdi.Core.1.0.0.3\lib\net462\EvilBaschdi.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="MahApps.Metro, Version=1.3.0.0, Culture=neutral, PublicKeyToken=f4fb5a3c4d1e5b4f, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.1.3.0\lib\net45\MahApps.Metro.dll</HintPath>
       <Private>True</Private>
@@ -86,9 +90,9 @@
     <Compile Include="Internal\DisplayDevice.cs" />
     <Compile Include="Internal\DisplayDeviceStateFlags.cs" />
     <Compile Include="Internal\DisplaySettingsFlags.cs" />
+    <Compile Include="Internal\IRotateButtonAndCanvas.cs" />
     <Compile Include="Internal\IRotateDisplay.cs" />
     <Compile Include="Internal\Pointl.cs" />
-    <Compile Include="Internal\RotateDisplay.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -99,6 +103,12 @@
     </Compile>
     <Compile Include="Internal\NativeMethods.cs" />
     <Compile Include="Internal\Devmode.cs" />
+    <Compile Include="Internal\RotateButtonAndCanvas.cs">
+      <DependentUpon>IRotateButtonAndCanvas.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Internal\RotateDisplay.cs">
+      <DependentUpon>IRotateDisplay.cs</DependentUpon>
+    </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -146,12 +156,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Entypo-license.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\EvilBaschdi.Core\EvilBaschdi.Core\EvilBaschdi.Core.csproj">
-      <Project>{8a06a423-244f-404f-aad8-53de2ee2aed7}</Project>
-      <Name>EvilBaschdi.Core</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
