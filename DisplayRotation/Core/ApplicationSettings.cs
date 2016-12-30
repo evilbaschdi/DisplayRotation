@@ -4,18 +4,15 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Forms;
 using DisplayRotation.Internal;
-using Button = System.Windows.Controls.Button;
-using ContextMenu = System.Windows.Forms.ContextMenu;
-using MenuItem = System.Windows.Forms.MenuItem;
+using Hardcodet.Wpf.TaskbarNotification;
 
 namespace DisplayRotation.Core
 {
     public class ApplicationSettings : IApplicationSettings
     {
         private readonly MainWindow _mainWindow;
-        private NotifyIcon _ni;
+        private readonly TaskbarIcon _taskbarIcon;
         private readonly IActiveDevices _activeDevices;
         private readonly IRotateDisplay _rotateDisplay;
         private readonly IRotateButtonAndCanvas _rotateButtonAndCanvas;
@@ -23,26 +20,27 @@ namespace DisplayRotation.Core
         /// <summary>
         /// </summary>
         /// <param name="mainWindow"></param>
-        /// <param name="ni"></param>
+        /// <param name="taskbarIcon"></param>
         /// <param name="activeDevices"></param>
         /// <param name="rotateDisplay"></param>
         /// <param name="rotateButtonAndCanvas"></param>
         /// <exception cref="ArgumentNullException">
         ///     <paramref name="mainWindow" /> is <see langword="null" />.
-        ///     <paramref name="ni" /> is <see langword="null" />.
+        ///     <paramref name="taskbarIcon" /> is <see langword="null" />.
         ///     <paramref name="activeDevices" /> is <see langword="null" />.
         ///     <paramref name="rotateDisplay" /> is <see langword="null" />.
         ///     <paramref name="rotateButtonAndCanvas" /> is <see langword="null" />.
         /// </exception>
-        public ApplicationSettings(MainWindow mainWindow, NotifyIcon ni, IActiveDevices activeDevices, IRotateDisplay rotateDisplay, IRotateButtonAndCanvas rotateButtonAndCanvas)
+        public ApplicationSettings(MainWindow mainWindow, TaskbarIcon taskbarIcon, IActiveDevices activeDevices, IRotateDisplay rotateDisplay,
+                                   IRotateButtonAndCanvas rotateButtonAndCanvas)
         {
             if (mainWindow == null)
             {
                 throw new ArgumentNullException(nameof(mainWindow));
             }
-            if (ni == null)
+            if (taskbarIcon == null)
             {
-                throw new ArgumentNullException(nameof(ni));
+                throw new ArgumentNullException(nameof(taskbarIcon));
             }
             if (activeDevices == null)
             {
@@ -56,8 +54,9 @@ namespace DisplayRotation.Core
             {
                 throw new ArgumentNullException(nameof(rotateButtonAndCanvas));
             }
+
             _mainWindow = mainWindow;
-            _ni = ni;
+            _taskbarIcon = taskbarIcon;
             _activeDevices = activeDevices;
             _rotateDisplay = rotateDisplay;
             _rotateButtonAndCanvas = rotateButtonAndCanvas;
@@ -71,24 +70,20 @@ namespace DisplayRotation.Core
         public void Run()
         {
             StartMinimized();
-            _ni.ContextMenu = NotifyIconContextMenu();
-            _ni.DoubleClick += NotifyIcon_DoubleClick;
+            _taskbarIcon.Icon = Icon.ExtractAssociatedIcon(Assembly.GetEntryAssembly().Location);
+            _taskbarIcon.ContextMenu = TaskbarIconContextMenu();
+            _taskbarIcon.TrayMouseDoubleClick += TaskbarIconDoubleClick;
         }
 
         /// <summary>
         /// </summary>
-        public void StartMinimized()
+        private void StartMinimized()
         {
-            _ni = new NotifyIcon
-                  {
-                      Icon = Icon.ExtractAssociatedIcon(Assembly.GetEntryAssembly().Location),
-                      Visible = true
-                  };
-
+            _taskbarIcon.Visibility = Visibility.Visible;
             _mainWindow.Hide();
         }
 
-        private ContextMenu NotifyIconContextMenu()
+        private ContextMenu TaskbarIconContextMenu()
         {
             var contextMenu = new ContextMenu();
 
@@ -108,10 +103,12 @@ namespace DisplayRotation.Core
                     }
                 }
 
-                var parent = new MenuItem(device.Name);
+                var parent = new MenuItem();
+                parent.Header = device.Name;
 
                 //anticlockwise
-                var anticlockwiseItem = new MenuItem("Upright 'anticlockwise'");
+                var anticlockwiseItem = new MenuItem();
+                anticlockwiseItem.Header = "Upright 'anticlockwise'";
                 anticlockwiseItem.Click += (sender, args) =>
                                            {
                                                _rotateDisplay.For(NativeMethods.Dmdo90, device.Id);
@@ -120,7 +117,8 @@ namespace DisplayRotation.Core
                                            };
 
                 //180
-                var clockwiseItem = new MenuItem("Landscape (rotated)");
+                var clockwiseItem = new MenuItem();
+                clockwiseItem.Header = "Landscape (rotated)";
                 clockwiseItem.Click += (sender, args) =>
                                        {
                                            _rotateDisplay.For(NativeMethods.Dmdo180, device.Id);
@@ -129,7 +127,8 @@ namespace DisplayRotation.Core
                                        };
 
                 //clockwise
-                var mirrorItem = new MenuItem("Upright 'clockwise'");
+                var mirrorItem = new MenuItem();
+                mirrorItem.Header = "Upright 'clockwise'";
                 mirrorItem.Click += (sender, args) =>
                                     {
                                         _rotateDisplay.For(NativeMethods.Dmdo270, device.Id);
@@ -138,8 +137,8 @@ namespace DisplayRotation.Core
                                     };
 
                 //restore
-                var restoreItem = new MenuItem("Reset");
-                restoreItem.DefaultItem = true;
+                var restoreItem = new MenuItem();
+                restoreItem.Header = "Reset";
                 restoreItem.Click += (sender, args) =>
                                      {
                                          _rotateDisplay.For(NativeMethods.DmdoDefault, device.Id);
@@ -147,35 +146,43 @@ namespace DisplayRotation.Core
                                          _mainWindow.SetWindowMargins();
                                      };
 
-                parent.MenuItems.AddRange(new[] { anticlockwiseItem, clockwiseItem, mirrorItem, restoreItem });
 
-                contextMenu.MenuItems.Add(parent);
+                parent.Items.Add(anticlockwiseItem);
+                parent.Items.Add(clockwiseItem);
+                parent.Items.Add(mirrorItem);
+                parent.Items.Add(restoreItem);
+                contextMenu.Items.Add(parent);
             }
-            contextMenu.MenuItems.Add("-");
-            var restore = new MenuItem("Restore application");
-            restore.Click += ContextMenuItemRestore_Click;
 
-            var close = new MenuItem("Close application");
-            close.Click += ContextMenuItemClose_Click;
+            var restoreApplication = new MenuItem();
+            restoreApplication.Header = "Restore application";
+            restoreApplication.Click += ContextMenuItemRestoreClick;
 
-            contextMenu.MenuItems.AddRange(new[] { restore, close });
+            var closeApplication = new MenuItem();
+            closeApplication.Header = "Close application";
+            closeApplication.Click += ContextMenuItemCloseClick;
+
+            contextMenu.Items.Add(new Separator());
+            contextMenu.Items.Add(restoreApplication);
+            contextMenu.Items.Add(closeApplication);
+
 
             return contextMenu;
         }
 
-        private void ContextMenuItemClose_Click(object sender, EventArgs e)
+        private void ContextMenuItemCloseClick(object sender, EventArgs e)
         {
-            _ni.Dispose();
+            _taskbarIcon.Dispose();
             _mainWindow.Close();
         }
 
-        private void ContextMenuItemRestore_Click(object sender, EventArgs e)
+        private void ContextMenuItemRestoreClick(object sender, EventArgs e)
         {
             _mainWindow.Show();
             _mainWindow.WindowState = WindowState.Normal;
         }
 
-        private void NotifyIcon_DoubleClick(object sender, EventArgs e)
+        private void TaskbarIconDoubleClick(object sender, EventArgs e)
         {
             _mainWindow.Show();
             _mainWindow.WindowState = WindowState.Normal;

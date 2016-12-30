@@ -4,14 +4,16 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Forms;
 using System.Windows.Media;
 using DisplayRotation.Core;
 using DisplayRotation.Internal;
 using EvilBaschdi.Core.Application;
 using EvilBaschdi.Core.Wpf;
 using MahApps.Metro.Controls;
-using Button = System.Windows.Controls.Button;
+
+//using System.Windows.Forms;
+
+//using Button = System.Windows.Controls.Button;
 
 namespace DisplayRotation
 {
@@ -30,20 +32,29 @@ namespace DisplayRotation
 
         public MainWindow()
         {
-            ISettings coreSettings = new CoreSettings();
             InitializeComponent();
-            _style = new MetroStyle(this, Accent, ThemeSwitch, coreSettings);
+            ISettings coreSettings = new CoreSettings(Properties.Settings.Default);
+            IThemeManagerHelper themeManagerHelper = new ThemeManagerHelper();
+            _style = new MetroStyle(this, Accent, ThemeSwitch, coreSettings, themeManagerHelper);
             _style.Load(true);
-            var activeDevices = new ActiveDevices();
+            IActiveDevices activeDevices = new ActiveDevices();
             _rotateDisplay = new RotateDisplay();
             _rotateButtonAndCanvas = new RotateButtonAndCanvas();
             BuildDeviceButtons(activeDevices);
-            var appSettings = new ApplicationSettings(this, new NotifyIcon(), activeDevices, _rotateDisplay, _rotateButtonAndCanvas);
+            IApplicationSettings appSettings = new ApplicationSettings(this, DisplayRotationTaskbarIcon, activeDevices, _rotateDisplay, _rotateButtonAndCanvas);
             appSettings.Run();
             var linkerTime = Assembly.GetExecutingAssembly().GetLinkerTime();
             LinkerTime.Content = linkerTime.ToString(CultureInfo.InvariantCulture);
+            Application.Current.Exit += Current_Exit;
             _overrideProtection = 1;
         }
+
+
+        void Current_Exit(object sender, ExitEventArgs e)
+        {
+            DisplayRotationTaskbarIcon.Dispose();
+        }
+
 
         protected override void OnStateChanged(EventArgs e)
         {
@@ -82,6 +93,7 @@ namespace DisplayRotation
                                         BorderThickness = new Thickness(2),
                                         ToolTip = device.Id
                                     };
+
                 displayButton.Click += DisplayButtonOnClick;
 
                 var displayCanvas = new Canvas
@@ -94,6 +106,16 @@ namespace DisplayRotation
             }
 
             SetWindowMargins();
+            ActivateFirstDisplay();
+        }
+
+        private void ActivateFirstDisplay()
+        {
+            var firstButton = DisplayStackPanel.Children.Cast<Canvas>().SelectMany(childCanvas => childCanvas.Children.Cast<Button>()).First();
+            firstButton.BorderBrush = (SolidColorBrush) FindResource("HighlightBrush");
+            firstButton.Foreground = (SolidColorBrush) FindResource("TextBrush");
+            _currentDisplayId = (uint) firstButton.ToolTip;
+            _currentButton = firstButton;
         }
 
 
@@ -101,7 +123,7 @@ namespace DisplayRotation
         {
             var children = DisplayStackPanel.Children;
 
-            var childWidth = children.Count*10d + 10d + children.Cast<Canvas>().Sum(child => child.Margin.Right);
+            var childWidth = children.Count * 10d + 10d + children.Cast<Canvas>().Sum(child => child.Margin.Right);
 
             var childHeight = (from Canvas canvas in children from Button button in canvas.Children select button.Height).Concat(new[] { 0d }).Max() + 90d;
 

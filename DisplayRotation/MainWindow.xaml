@@ -4,6 +4,7 @@
                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                       xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+                      xmlns:tb="http://www.hardcodet.net/taskbar"
                       mc:Ignorable="d" GlowBrush="{DynamicResource AccentColorBrush}"
                       Title="Change Rotation" Width="1000" Height="200" Icon="b.ico">
     <!--  RightWindowCommands  -->
@@ -23,7 +24,10 @@
             </Button>
         </controls:WindowCommands>
     </controls:MetroWindow.RightWindowCommands>
+
+    <!-- Grid -->
     <Grid>
+        <tb:TaskbarIcon Name="DisplayRotationTaskbarIcon" ToolTip="Change Display Rotation" />
         <StackPanel>
             <StackPanel Orientation="Horizontal" VerticalAlignment="Top" CanHorizontallyScroll="True">
                 <Button x:Name="BtnClockwise" Margin="10,10,0,0" Height="30" Width="150" Click="BtnClockwise_OnClick">

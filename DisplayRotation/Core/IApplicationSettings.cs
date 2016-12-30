@@ -1,7 +1,8 @@
-﻿namespace DisplayRotation.Core
+﻿using EvilBaschdi.Core.DotNetExtensions;
+
+namespace DisplayRotation.Core
 {
-    public interface IApplicationSettings
+    public interface IApplicationSettings : IRun
     {
-        void Run();
     }
 }
