@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
+using EvilBaschdi.Core.DotNetExtensions;
 
 namespace DisplayRotation.Internal
 {
-    public interface IActiveDevices
+    public interface IActiveDevices : IValue<IEnumerable<DisplayHelper>>
     {
-        IEnumerable<DisplayHelper> Get();
     }
 }

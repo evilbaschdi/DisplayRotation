@@ -5,7 +5,7 @@ namespace DisplayRotation.Internal
 {
     public class RotateButtonAndCanvas : IRotateButtonAndCanvas
     {
-        public void For(int rotation, Button button)
+        public void Run(int rotation, Button button)
         {
             var x = 10d;
             var w = 192d;

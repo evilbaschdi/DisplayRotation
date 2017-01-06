@@ -4,12 +4,11 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
-using DisplayRotation.Internal;
 using Hardcodet.Wpf.TaskbarNotification;
 
-namespace DisplayRotation.Core
+namespace DisplayRotation.Internal
 {
-    public class ApplicationSettings : IApplicationSettings
+    public class TaskbarIconConfiguration : ITaskbarIconConfiguration
     {
         private readonly MainWindow _mainWindow;
         private readonly TaskbarIcon _taskbarIcon;
@@ -31,8 +30,8 @@ namespace DisplayRotation.Core
         ///     <paramref name="rotateDisplay" /> is <see langword="null" />.
         ///     <paramref name="rotateButtonAndCanvas" /> is <see langword="null" />.
         /// </exception>
-        public ApplicationSettings(MainWindow mainWindow, TaskbarIcon taskbarIcon, IActiveDevices activeDevices, IRotateDisplay rotateDisplay,
-                                   IRotateButtonAndCanvas rotateButtonAndCanvas)
+        public TaskbarIconConfiguration(MainWindow mainWindow, TaskbarIcon taskbarIcon, IActiveDevices activeDevices, IRotateDisplay rotateDisplay,
+                                        IRotateButtonAndCanvas rotateButtonAndCanvas)
         {
             if (mainWindow == null)
             {
@@ -70,7 +69,11 @@ namespace DisplayRotation.Core
         public void Run()
         {
             StartMinimized();
-            _taskbarIcon.Icon = Icon.ExtractAssociatedIcon(Assembly.GetEntryAssembly().Location);
+            var filePath = Assembly.GetEntryAssembly().Location;
+            if (filePath != null)
+            {
+                _taskbarIcon.Icon = Icon.ExtractAssociatedIcon(filePath);
+            }
             _taskbarIcon.ContextMenu = TaskbarIconContextMenu();
             _taskbarIcon.TrayMouseDoubleClick += TaskbarIconDoubleClick;
         }
@@ -83,11 +86,12 @@ namespace DisplayRotation.Core
             _mainWindow.Hide();
         }
 
+        // ReSharper disable UseObjectOrCollectionInitializer
         private ContextMenu TaskbarIconContextMenu()
         {
             var contextMenu = new ContextMenu();
 
-            foreach (var device in _activeDevices.Get().OrderBy(d => d.PositionX))
+            foreach (var device in _activeDevices.Value.OrderBy(d => d.PositionX))
             {
                 var currentButton = new Button();
 
@@ -103,16 +107,20 @@ namespace DisplayRotation.Core
                     }
                 }
 
-                var parent = new MenuItem();
-                parent.Header = device.Name;
+                var parent = new MenuItem
+                             {
+                                 Header = device.Name
+                             };
 
                 //anticlockwise
+
                 var anticlockwiseItem = new MenuItem();
+
                 anticlockwiseItem.Header = "Upright 'anticlockwise'";
                 anticlockwiseItem.Click += (sender, args) =>
                                            {
-                                               _rotateDisplay.For(NativeMethods.Dmdo90, device.Id);
-                                               _rotateButtonAndCanvas.For(NativeMethods.Dmdo90, currentButton);
+                                               _rotateDisplay.Run(NativeMethods.Dmdo90, device.Id);
+                                               _rotateButtonAndCanvas.Run(NativeMethods.Dmdo90, currentButton);
                                                _mainWindow.SetWindowMargins();
                                            };
 
@@ -121,8 +129,8 @@ namespace DisplayRotation.Core
                 clockwiseItem.Header = "Landscape (rotated)";
                 clockwiseItem.Click += (sender, args) =>
                                        {
-                                           _rotateDisplay.For(NativeMethods.Dmdo180, device.Id);
-                                           _rotateButtonAndCanvas.For(NativeMethods.Dmdo180, currentButton);
+                                           _rotateDisplay.Run(NativeMethods.Dmdo180, device.Id);
+                                           _rotateButtonAndCanvas.Run(NativeMethods.Dmdo180, currentButton);
                                            _mainWindow.SetWindowMargins();
                                        };
 
@@ -131,8 +139,8 @@ namespace DisplayRotation.Core
                 mirrorItem.Header = "Upright 'clockwise'";
                 mirrorItem.Click += (sender, args) =>
                                     {
-                                        _rotateDisplay.For(NativeMethods.Dmdo270, device.Id);
-                                        _rotateButtonAndCanvas.For(NativeMethods.Dmdo270, currentButton);
+                                        _rotateDisplay.Run(NativeMethods.Dmdo270, device.Id);
+                                        _rotateButtonAndCanvas.Run(NativeMethods.Dmdo270, currentButton);
                                         _mainWindow.SetWindowMargins();
                                     };
 
@@ -141,8 +149,8 @@ namespace DisplayRotation.Core
                 restoreItem.Header = "Reset";
                 restoreItem.Click += (sender, args) =>
                                      {
-                                         _rotateDisplay.For(NativeMethods.DmdoDefault, device.Id);
-                                         _rotateButtonAndCanvas.For(NativeMethods.DmdoDefault, currentButton);
+                                         _rotateDisplay.Run(NativeMethods.DmdoDefault, device.Id);
+                                         _rotateButtonAndCanvas.Run(NativeMethods.DmdoDefault, currentButton);
                                          _mainWindow.SetWindowMargins();
                                      };
 
@@ -170,6 +178,7 @@ namespace DisplayRotation.Core
             return contextMenu;
         }
 
+        // ReSharper restore UseObjectOrCollectionInitializer
         private void ContextMenuItemCloseClick(object sender, EventArgs e)
         {
             _taskbarIcon.Dispose();

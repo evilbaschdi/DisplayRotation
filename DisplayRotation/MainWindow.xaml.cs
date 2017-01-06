@@ -5,7 +5,6 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using DisplayRotation.Core;
 using DisplayRotation.Internal;
 using EvilBaschdi.Core.Application;
 using EvilBaschdi.Core.Wpf;
@@ -41,7 +40,7 @@ namespace DisplayRotation
             _rotateDisplay = new RotateDisplay();
             _rotateButtonAndCanvas = new RotateButtonAndCanvas();
             BuildDeviceButtons(activeDevices);
-            IApplicationSettings appSettings = new ApplicationSettings(this, DisplayRotationTaskbarIcon, activeDevices, _rotateDisplay, _rotateButtonAndCanvas);
+            ITaskbarIconConfiguration appSettings = new TaskbarIconConfiguration(this, DisplayRotationTaskbarIcon, activeDevices, _rotateDisplay, _rotateButtonAndCanvas);
             appSettings.Run();
             var linkerTime = Assembly.GetExecutingAssembly().GetLinkerTime();
             LinkerTime.Content = linkerTime.ToString(CultureInfo.InvariantCulture);
@@ -72,7 +71,7 @@ namespace DisplayRotation
             var w = 192;
             var h = 108;
 
-            foreach (var device in activeDevices.Get().OrderBy(d => d.PositionX))
+            foreach (var device in activeDevices.Value.OrderBy(d => d.PositionX))
             {
                 var buttonHeight = device.Width > device.Height ? h : w;
                 var buttonWidth = device.Width > device.Height ? w : h;
@@ -150,22 +149,22 @@ namespace DisplayRotation
 
         private void BtnClockwise_OnClick(object sender, RoutedEventArgs e)
         {
-            _rotateDisplay.For(NativeMethods.Dmdo270, _currentDisplayId);
-            _rotateButtonAndCanvas.For(NativeMethods.Dmdo270, _currentButton);
+            _rotateDisplay.Run(NativeMethods.Dmdo270, _currentDisplayId);
+            _rotateButtonAndCanvas.Run(NativeMethods.Dmdo270, _currentButton);
             SetWindowMargins();
         }
 
         private void BtnAntiClock_OnClick(object sender, RoutedEventArgs e)
         {
-            _rotateDisplay.For(NativeMethods.Dmdo90, _currentDisplayId);
-            _rotateButtonAndCanvas.For(NativeMethods.Dmdo90, _currentButton);
+            _rotateDisplay.Run(NativeMethods.Dmdo90, _currentDisplayId);
+            _rotateButtonAndCanvas.Run(NativeMethods.Dmdo90, _currentButton);
             SetWindowMargins();
         }
 
         private void BtnReset_OnClick(object sender, RoutedEventArgs e)
         {
-            _rotateDisplay.For(NativeMethods.DmdoDefault, _currentDisplayId);
-            _rotateButtonAndCanvas.For(NativeMethods.DmdoDefault, _currentButton);
+            _rotateDisplay.Run(NativeMethods.DmdoDefault, _currentDisplayId);
+            _rotateButtonAndCanvas.Run(NativeMethods.DmdoDefault, _currentButton);
             SetWindowMargins();
         }
 

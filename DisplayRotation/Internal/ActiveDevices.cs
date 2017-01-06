@@ -6,46 +6,49 @@ namespace DisplayRotation.Internal
 {
     public class ActiveDevices : IActiveDevices
     {
-        public IEnumerable<DisplayHelper> Get()
+        public IEnumerable<DisplayHelper> Value
         {
-            var device = new DisplayDevice();
-            device.cb = Marshal.SizeOf(device);
-
-            var list = new List<DisplayHelper>();
-            for (uint id = 0; NativeMethods.EnumDisplayDevices(null, id, ref device, 0); id++)
+            get
             {
+                var device = new DisplayDevice();
                 device.cb = Marshal.SizeOf(device);
 
-                NativeMethods.EnumDisplayDevices(device.DeviceName, 0, ref device, 0);
-
-                device.cb = Marshal.SizeOf(device);
-
-                device.cb = Marshal.SizeOf(device);
-
-                if (device.DeviceName.Trim().Length > 0)
+                var list = new List<DisplayHelper>();
+                for (uint id = 0; NativeMethods.EnumDisplayDevices(null, id, ref device, 0); id++)
                 {
-                    var helper = new DisplayHelper
-                                 {
-                                     Id = id,
-                                     Name = device.DeviceString
-                                 };
+                    device.cb = Marshal.SizeOf(device);
 
-                    foreach (var screen in Screen.AllScreens)
+                    NativeMethods.EnumDisplayDevices(device.DeviceName, 0, ref device, 0);
+
+                    device.cb = Marshal.SizeOf(device);
+
+                    device.cb = Marshal.SizeOf(device);
+
+                    if (device.DeviceName.Trim().Length > 0)
                     {
-                        if (device.DeviceName.Contains(screen.DeviceName))
-                        {
-                            var rectangle = screen.Bounds;
-                            helper.PositionX = rectangle.X;
-                            helper.PositionY = rectangle.Y;
-                            helper.Height = rectangle.Height;
-                            helper.Width = rectangle.Width;
-                        }
-                    }
-                    list.Add(helper);
-                }
-            }
+                        var helper = new DisplayHelper
+                                     {
+                                         Id = id,
+                                         Name = device.DeviceString
+                                     };
 
-            return list;
+                        foreach (var screen in Screen.AllScreens)
+                        {
+                            if (device.DeviceName.Contains(screen.DeviceName))
+                            {
+                                var rectangle = screen.Bounds;
+                                helper.PositionX = rectangle.X;
+                                helper.PositionY = rectangle.Y;
+                                helper.Height = rectangle.Height;
+                                helper.Width = rectangle.Width;
+                            }
+                        }
+                        list.Add(helper);
+                    }
+                }
+
+                return list;
+            }
         }
     }
 }

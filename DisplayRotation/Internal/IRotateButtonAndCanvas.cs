@@ -1,9 +1,9 @@
 using System.Windows.Controls;
+using EvilBaschdi.Core.DotNetExtensions;
 
 namespace DisplayRotation.Internal
 {
-    public interface IRotateButtonAndCanvas
+    public interface IRotateButtonAndCanvas : IRunFor2<int, Button>
     {
-        void For(int rotation, Button button);
     }
 }
