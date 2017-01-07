@@ -5,7 +5,7 @@ namespace DisplayRotation.Internal
     [StructLayout(LayoutKind.Sequential)]
     struct Pointl
     {
-        long x;
-        long y;
+        readonly long x;
+        readonly long y;
     }
 }

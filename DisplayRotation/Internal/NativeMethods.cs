@@ -27,10 +27,10 @@ namespace DisplayRotation.Internal
         public static Devmode CreateDevmode()
         {
             var dm = new Devmode
-            {
-                dmDeviceName = new string(new char[32]),
-                dmFormName = new string(new char[32])
-            };
+                     {
+                         dmDeviceName = new string(new char[32]),
+                         dmFormName = new string(new char[32])
+                     };
             dm.dmSize = (short) Marshal.SizeOf(dm);
             return dm;
         }
