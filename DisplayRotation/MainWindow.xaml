@@ -5,8 +5,9 @@
                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                       xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
                       xmlns:tb="http://www.hardcodet.net/taskbar"
+                      ShowIconOnTitleBar="False" TitleCharacterCasing="Normal"
                       mc:Ignorable="d" GlowBrush="{DynamicResource AccentColorBrush}"
-                      Title="Change Rotation" Width="1000" Height="200" Icon="b.ico">
+                      Title="Change Rotation" Width="1000" Height="250" Icon="b.ico">
     <!--  RightWindowCommands  -->
     <controls:MetroWindow.RightWindowCommands>
         <controls:WindowCommands>
@@ -24,11 +25,12 @@
             </Button>
         </controls:WindowCommands>
     </controls:MetroWindow.RightWindowCommands>
-
     <!-- Grid -->
     <Grid>
-        <tb:TaskbarIcon Name="DisplayRotationTaskbarIcon" ToolTip="Change Display Rotation" />
+        <!-- Taskbar Icon -->
+        <tb:TaskbarIcon Name="DisplayRotationTaskbarIcon" ToolTip="Change Display Rotation" ToolTipText="Change Display Rotation" />
         <StackPanel>
+            <!-- Clockwise -->
             <StackPanel Orientation="Horizontal" VerticalAlignment="Top" CanHorizontallyScroll="True">
                 <Button x:Name="BtnClockwise" Margin="10,10,0,0" Height="30" Width="150" Click="BtnClockwise_OnClick">
                     <StackPanel Orientation="Horizontal">
@@ -40,7 +42,7 @@
                         <TextBlock Margin="5 0 0 0" VerticalAlignment="Center" Text="Clockwise" />
                     </StackPanel>
                 </Button>
-
+                <!-- Anticlockwise -->
                 <Button x:Name="BtnAntiClock" Margin="10,10,0,0" Height="30" Width="150" Click="BtnAntiClock_OnClick">
                     <StackPanel Orientation="Horizontal">
                         <Rectangle Width="16" Height="16" Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}">
@@ -51,7 +53,7 @@
                         <TextBlock Margin="5 0 0 0" VerticalAlignment="Center" Text="Anticlockwise" />
                     </StackPanel>
                 </Button>
-
+                <!-- Reset -->
                 <Button x:Name="BtnReset" Margin="10,10,0,0" Height="30" Width="150" Click="BtnReset_OnClick">
                     <StackPanel Orientation="Horizontal">
                         <Rectangle Width="16" Height="16" Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}">
@@ -63,6 +65,11 @@
                     </StackPanel>
                 </Button>
             </StackPanel>
+            <!-- Horizontal Line -->
+            <StackPanel Margin="10,10,10,0" Orientation="Vertical">
+                <Separator Background="{DynamicResource AccentColorBrush}"/>
+            </StackPanel>
+            <!-- Display Buttons -->
             <StackPanel x:Name="DisplayStackPanel" Orientation="Horizontal" CanHorizontallyScroll="True" Margin="0,10,0,0" />
         </StackPanel>
     </Grid>
@@ -99,8 +106,8 @@
                         </Button>
                     </StackPanel>
                     <!-- Horizontal Line -->
-                    <StackPanel Margin="0,10,0,0" Orientation="Vertical">
-                        <Rectangle Width="220" VerticalAlignment="Stretch" Stroke="{DynamicResource AccentColorBrush}" />
+                    <StackPanel Margin="15,10,15,0" Orientation="Vertical">
+                        <Separator Background="{DynamicResource AccentColorBrush}"/>
                     </StackPanel>
                     <!-- Build / Linker Time -->
                     <StackPanel Orientation="Horizontal">

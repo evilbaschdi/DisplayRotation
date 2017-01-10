@@ -127,7 +127,7 @@ namespace DisplayRotation
             var childHeight = (from Canvas canvas in children from Button button in canvas.Children select button.Height).Concat(new[] { 0d }).Max() + 90d;
 
             var windowWidth = 490d;
-            var windowHeight = 200d;
+            var windowHeight = 250d;
             Width = childWidth > windowWidth ? childWidth : windowWidth;
             Height = childHeight > windowHeight ? childHeight : windowHeight;
         }
@@ -229,6 +229,7 @@ namespace DisplayRotation
             {
                 _style.SetTheme(sender);
             }
+            ReloadDisplayButtonStyle();
         }
 
         private void AccentOnSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -238,6 +239,19 @@ namespace DisplayRotation
                 return;
             }
             _style.SetAccent(sender, e);
+            ReloadDisplayButtonStyle();
+        }
+
+        private void ReloadDisplayButtonStyle()
+        {
+            var buttons = DisplayStackPanel.Children.Cast<Canvas>().SelectMany(childCanvas => childCanvas.Children.Cast<Button>());
+
+            foreach (var button in buttons)
+            {
+                button.Background = (SolidColorBrush) FindResource("AccentColorBrush");
+                button.BorderBrush = (SolidColorBrush) FindResource("HighlightBrush");
+                button.Foreground = (SolidColorBrush) FindResource("TextBrush");
+            }
         }
 
         #endregion MetroStyle
