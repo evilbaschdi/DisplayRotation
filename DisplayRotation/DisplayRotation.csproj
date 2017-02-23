@@ -80,6 +80,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Core\AutoStart.cs">
+      <DependentUpon>IAutoStart.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Core\IAutoStart.cs" />
+    <Compile Include="Core\StringExtensions.cs" />
     <Compile Include="Internal\TaskbarIconConfiguration.cs">
       <DependentUpon>ITaskbarIconConfiguration.cs</DependentUpon>
     </Compile>

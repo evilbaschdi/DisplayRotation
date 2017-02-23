@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using DisplayRotation.Core;
 using DisplayRotation.Internal;
 using EvilBaschdi.Core.Application;
 using EvilBaschdi.Core.Wpf;
@@ -26,6 +27,7 @@ namespace DisplayRotation
         private Button _currentButton;
         private readonly IRotateDisplay _rotateDisplay;
         private readonly IRotateButtonAndCanvas _rotateButtonAndCanvas;
+        private IAutoStart _autoStart;
         private readonly IMetroStyle _style;
         private readonly int _overrideProtection;
 
@@ -44,8 +46,16 @@ namespace DisplayRotation
             appSettings.Run();
             var linkerTime = Assembly.GetExecutingAssembly().GetLinkerTime();
             LinkerTime.Content = linkerTime.ToString(CultureInfo.InvariantCulture);
+
             Application.Current.Exit += Current_Exit;
             _overrideProtection = 1;
+            ConfigureAutoRun();
+        }
+
+        private void ConfigureAutoRun()
+        {
+            _autoStart = new AutoStart("DisplayRotation");
+            AutoStartSwitch.IsChecked = _autoStart.IsEnabled;
         }
 
 
@@ -112,7 +122,7 @@ namespace DisplayRotation
         {
             var firstButton = DisplayStackPanel.Children.Cast<Canvas>().SelectMany(childCanvas => childCanvas.Children.Cast<Button>()).First();
             firstButton.BorderBrush = (SolidColorBrush) FindResource("HighlightBrush");
-            firstButton.Foreground = (SolidColorBrush) FindResource("TextBrush");
+            firstButton.Foreground = Brushes.White;
             _currentDisplayId = (uint) firstButton.ToolTip;
             _currentButton = firstButton;
         }
@@ -124,10 +134,10 @@ namespace DisplayRotation
 
             var childWidth = children.Count * 10d + 10d + children.Cast<Canvas>().Sum(child => child.Margin.Right);
 
-            var childHeight = (from Canvas canvas in children from Button button in canvas.Children select button.Height).Concat(new[] { 0d }).Max() + 90d;
+            var childHeight = (from Canvas canvas in children from Button button in canvas.Children select button.Height).Concat(new[] { 0d }).Max() + 105d;
 
             var windowWidth = 490d;
-            var windowHeight = 250d;
+            var windowHeight = 300d;
             Width = childWidth > windowWidth ? childWidth : windowWidth;
             Height = childHeight > windowHeight ? childHeight : windowHeight;
         }
@@ -142,7 +152,7 @@ namespace DisplayRotation
 
             var button = (Button) sender;
             button.BorderBrush = (SolidColorBrush) FindResource("HighlightBrush");
-            button.Foreground = (SolidColorBrush) FindResource("TextBrush");
+            button.Foreground = Brushes.White;
             _currentDisplayId = (uint) button.ToolTip;
             _currentButton = button;
         }
@@ -166,6 +176,25 @@ namespace DisplayRotation
             _rotateDisplay.Run(NativeMethods.DmdoDefault, _currentDisplayId);
             _rotateButtonAndCanvas.Run(NativeMethods.DmdoDefault, _currentButton);
             SetWindowMargins();
+        }
+
+        private void AutoStartIsCheckedChanged(object sender, EventArgs e)
+        {
+            var toggleSwitch = (ToggleSwitch) sender;
+
+            if (_overrideProtection == 0)
+            {
+                return;
+            }
+
+            if (toggleSwitch.IsChecked.HasValue && toggleSwitch.IsChecked.Value)
+            {
+                _autoStart.Enable();
+            }
+            else if (_autoStart.IsEnabled)
+            {
+                _autoStart.Disable();
+            }
         }
 
         #region Flyout
@@ -250,8 +279,10 @@ namespace DisplayRotation
             {
                 button.Background = (SolidColorBrush) FindResource("AccentColorBrush");
                 button.BorderBrush = (SolidColorBrush) FindResource("HighlightBrush");
-                button.Foreground = (SolidColorBrush) FindResource("TextBrush");
+                button.Foreground = Brushes.Black;
             }
+
+            _currentButton.Foreground = Brushes.White;
         }
 
         #endregion MetroStyle
