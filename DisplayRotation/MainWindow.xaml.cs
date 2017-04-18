@@ -159,22 +159,22 @@ namespace DisplayRotation
 
         private void BtnClockwise_OnClick(object sender, RoutedEventArgs e)
         {
-            _rotateDisplay.Run(NativeMethods.Dmdo270, _currentDisplayId);
-            _rotateButtonAndCanvas.Run(NativeMethods.Dmdo270, _currentButton);
+            _rotateDisplay.RunFor(NativeMethods.Dmdo270, _currentDisplayId);
+            _rotateButtonAndCanvas.RunFor(NativeMethods.Dmdo270, _currentButton);
             SetWindowMargins();
         }
 
         private void BtnAntiClock_OnClick(object sender, RoutedEventArgs e)
         {
-            _rotateDisplay.Run(NativeMethods.Dmdo90, _currentDisplayId);
-            _rotateButtonAndCanvas.Run(NativeMethods.Dmdo90, _currentButton);
+            _rotateDisplay.RunFor(NativeMethods.Dmdo90, _currentDisplayId);
+            _rotateButtonAndCanvas.RunFor(NativeMethods.Dmdo90, _currentButton);
             SetWindowMargins();
         }
 
         private void BtnReset_OnClick(object sender, RoutedEventArgs e)
         {
-            _rotateDisplay.Run(NativeMethods.DmdoDefault, _currentDisplayId);
-            _rotateButtonAndCanvas.Run(NativeMethods.DmdoDefault, _currentButton);
+            _rotateDisplay.RunFor(NativeMethods.DmdoDefault, _currentDisplayId);
+            _rotateButtonAndCanvas.RunFor(NativeMethods.DmdoDefault, _currentButton);
             SetWindowMargins();
         }
 

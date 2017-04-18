@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using Hardcodet.Wpf.TaskbarNotification;
+using MahApps.Metro.IconPacks;
 
 namespace DisplayRotation.Internal
 {
@@ -111,46 +112,65 @@ namespace DisplayRotation.Internal
                              {
                                  Header = device.Name
                              };
+                parent.Icon = new PackIconMaterial
+                              {
+                                  Kind = PackIconMaterialKind.Monitor
+                              };
 
                 //anticlockwise
 
                 var anticlockwiseItem = new MenuItem();
-
                 anticlockwiseItem.Header = "Upright 'anticlockwise'";
+                anticlockwiseItem.Icon = new PackIconMaterial
+                                         {
+                                             Kind = PackIconMaterialKind.ChevronLeft
+                                         };
                 anticlockwiseItem.Click += (sender, args) =>
                                            {
-                                               _rotateDisplay.Run(NativeMethods.Dmdo90, device.Id);
-                                               _rotateButtonAndCanvas.Run(NativeMethods.Dmdo90, currentButton);
+                                               _rotateDisplay.RunFor(NativeMethods.Dmdo90, device.Id);
+                                               _rotateButtonAndCanvas.RunFor(NativeMethods.Dmdo90, currentButton);
                                                _mainWindow.SetWindowMargins();
                                            };
 
                 //180
                 var clockwiseItem = new MenuItem();
                 clockwiseItem.Header = "Landscape (rotated)";
+                clockwiseItem.Icon = new PackIconMaterial
+                                     {
+                                         Kind = PackIconMaterialKind.ChevronUp
+                                     };
                 clockwiseItem.Click += (sender, args) =>
                                        {
-                                           _rotateDisplay.Run(NativeMethods.Dmdo180, device.Id);
-                                           _rotateButtonAndCanvas.Run(NativeMethods.Dmdo180, currentButton);
+                                           _rotateDisplay.RunFor(NativeMethods.Dmdo180, device.Id);
+                                           _rotateButtonAndCanvas.RunFor(NativeMethods.Dmdo180, currentButton);
                                            _mainWindow.SetWindowMargins();
                                        };
 
                 //clockwise
                 var mirrorItem = new MenuItem();
                 mirrorItem.Header = "Upright 'clockwise'";
+                mirrorItem.Icon = new PackIconMaterial
+                                  {
+                                      Kind = PackIconMaterialKind.ChevronRight
+                                  };
                 mirrorItem.Click += (sender, args) =>
                                     {
-                                        _rotateDisplay.Run(NativeMethods.Dmdo270, device.Id);
-                                        _rotateButtonAndCanvas.Run(NativeMethods.Dmdo270, currentButton);
+                                        _rotateDisplay.RunFor(NativeMethods.Dmdo270, device.Id);
+                                        _rotateButtonAndCanvas.RunFor(NativeMethods.Dmdo270, currentButton);
                                         _mainWindow.SetWindowMargins();
                                     };
 
                 //restore
                 var restoreItem = new MenuItem();
                 restoreItem.Header = "Reset";
+                restoreItem.Icon = new PackIconMaterial
+                                   {
+                                       Kind = PackIconMaterialKind.ChevronDown
+                                   };
                 restoreItem.Click += (sender, args) =>
                                      {
-                                         _rotateDisplay.Run(NativeMethods.DmdoDefault, device.Id);
-                                         _rotateButtonAndCanvas.Run(NativeMethods.DmdoDefault, currentButton);
+                                         _rotateDisplay.RunFor(NativeMethods.DmdoDefault, device.Id);
+                                         _rotateButtonAndCanvas.RunFor(NativeMethods.DmdoDefault, currentButton);
                                          _mainWindow.SetWindowMargins();
                                      };
 
@@ -164,10 +184,18 @@ namespace DisplayRotation.Internal
 
             var restoreApplication = new MenuItem();
             restoreApplication.Header = "Restore application";
+            restoreApplication.Icon = new PackIconMaterial
+                                      {
+                                          Kind = PackIconMaterialKind.WindowRestore
+                                      };
             restoreApplication.Click += ContextMenuItemRestoreClick;
 
             var closeApplication = new MenuItem();
             closeApplication.Header = "Close application";
+            closeApplication.Icon = new PackIconMaterial
+                                    {
+                                        Kind = PackIconMaterialKind.Power
+                                    };
             closeApplication.Click += ContextMenuItemCloseClick;
 
             contextMenu.Items.Add(new Separator());
@@ -179,6 +207,7 @@ namespace DisplayRotation.Internal
         }
 
         // ReSharper restore UseObjectOrCollectionInitializer
+
         private void ContextMenuItemCloseClick(object sender, EventArgs e)
         {
             _taskbarIcon.Dispose();

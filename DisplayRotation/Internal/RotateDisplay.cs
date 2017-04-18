@@ -5,7 +5,7 @@ namespace DisplayRotation.Internal
 {
     public class RotateDisplay : IRotateDisplay
     {
-        public void Run(int rotation, uint deviceId)
+        public void RunFor(int rotation, uint deviceId)
         {
             //uint deviceId = 1; // zero origin (i.e. 1 means DISPLAY2)
 
