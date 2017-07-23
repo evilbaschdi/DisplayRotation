@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using EvilBaschdi.Core.DotNetExtensions;
 
 namespace DisplayRotation.Internal
 {
@@ -50,5 +51,14 @@ namespace DisplayRotation.Internal
                 return list;
             }
         }
+    }
+
+    public interface IScreenCount : IValue<int>
+    {
+    }
+
+    public class ScreenCount : IScreenCount
+    {
+        public int Value => Screen.AllScreens.Length;
     }
 }

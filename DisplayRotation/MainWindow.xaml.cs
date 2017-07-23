@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using DisplayRotation.Core;
 using DisplayRotation.Internal;
+using DisplayRotation.Properties;
 using EvilBaschdi.Core.Application;
 using EvilBaschdi.Core.Wpf;
 using MahApps.Metro.Controls;
@@ -23,33 +24,51 @@ namespace DisplayRotation
     // ReSharper disable once RedundantExtendsListEntry
     public partial class MainWindow : MetroWindow
     {
-        private uint _currentDisplayId;
-        private Button _currentButton;
-        private readonly IRotateDisplay _rotateDisplay;
-        private readonly IRotateButtonAndCanvas _rotateButtonAndCanvas;
-        private IAutoStart _autoStart;
-        private readonly IMetroStyle _style;
         private readonly int _overrideProtection;
+        private readonly IRotateButtonAndCanvas _rotateButtonAndCanvas;
+        private readonly IRotateDisplay _rotateDisplay;
+        private readonly IMetroStyle _style;
+        private IAutoStart _autoStart;
+        private Button _currentButton;
+        private uint _currentDisplayId;
+        private int _screenCount;
+
 
         public MainWindow()
         {
             InitializeComponent();
-            ISettings coreSettings = new CoreSettings(Properties.Settings.Default);
+            ISettings coreSettings = new CoreSettings(Settings.Default);
             IThemeManagerHelper themeManagerHelper = new ThemeManagerHelper();
             _style = new MetroStyle(this, Accent, ThemeSwitch, coreSettings, themeManagerHelper);
             _style.Load(true);
-            IActiveDevices activeDevices = new ActiveDevices();
+
             _rotateDisplay = new RotateDisplay();
             _rotateButtonAndCanvas = new RotateButtonAndCanvas();
-            BuildDeviceButtons(activeDevices);
-            ITaskbarIconConfiguration appSettings = new TaskbarIconConfiguration(this, DisplayRotationTaskbarIcon, activeDevices, _rotateDisplay, _rotateButtonAndCanvas);
-            appSettings.Run();
+            Load();
             var linkerTime = Assembly.GetExecutingAssembly().GetLinkerTime();
             LinkerTime.Content = linkerTime.ToString(CultureInfo.InvariantCulture);
 
-            Application.Current.Exit += Current_Exit;
+            Application.Current.Exit += CurrentExit;
             _overrideProtection = 1;
             ConfigureAutoRun();
+        }
+
+        private void Load()
+        {
+            IActiveDevices activeDevices = new ActiveDevices();
+            BuildDeviceButtons(activeDevices);
+            ITaskbarIconConfiguration taskbarIconConfiguration =
+                new TaskbarIconConfiguration(this, DisplayRotationTaskbarIcon, activeDevices, _rotateDisplay, _rotateButtonAndCanvas);
+            taskbarIconConfiguration.StartMinimized();
+            taskbarIconConfiguration.Run();
+            IScreenCount screenCount = new ScreenCount();
+            _screenCount = screenCount.Value;
+        }
+
+        private void ReloadClick(object sender, RoutedEventArgs e)
+        {
+            DisplayStackPanel.Children.Clear();
+            Load();
         }
 
         private void ConfigureAutoRun()
@@ -59,7 +78,7 @@ namespace DisplayRotation
         }
 
 
-        void Current_Exit(object sender, ExitEventArgs e)
+        private void CurrentExit(object sender, ExitEventArgs e)
         {
             DisplayRotationTaskbarIcon.Dispose();
         }
@@ -120,13 +139,15 @@ namespace DisplayRotation
 
         private void ActivateFirstDisplay()
         {
-            var firstButton = DisplayStackPanel.Children.Cast<Canvas>().SelectMany(childCanvas => childCanvas.Children.Cast<Button>()).First();
-            firstButton.BorderBrush = (SolidColorBrush) FindResource("HighlightBrush");
-            firstButton.Foreground = Brushes.White;
-            _currentDisplayId = (uint) firstButton.ToolTip;
-            _currentButton = firstButton;
+            if (DisplayStackPanel.Children.Cast<Canvas>().Any())
+            {
+                var firstButton = DisplayStackPanel.Children.Cast<Canvas>().SelectMany(childCanvas => childCanvas.Children.Cast<Button>()).First();
+                firstButton.BorderBrush = (SolidColorBrush) FindResource("HighlightBrush");
+                firstButton.Foreground = Brushes.White;
+                _currentDisplayId = (uint) firstButton.ToolTip;
+                _currentButton = firstButton;
+            }
         }
-
 
         public void SetWindowMargins()
         {
@@ -157,21 +178,21 @@ namespace DisplayRotation
             _currentButton = button;
         }
 
-        private void BtnClockwise_OnClick(object sender, RoutedEventArgs e)
+        private void BtnClockwiseOnClick(object sender, RoutedEventArgs e)
         {
             _rotateDisplay.RunFor(NativeMethods.Dmdo270, _currentDisplayId);
             _rotateButtonAndCanvas.RunFor(NativeMethods.Dmdo270, _currentButton);
             SetWindowMargins();
         }
 
-        private void BtnAntiClock_OnClick(object sender, RoutedEventArgs e)
+        private void BtnAntiClockOnClick(object sender, RoutedEventArgs e)
         {
             _rotateDisplay.RunFor(NativeMethods.Dmdo90, _currentDisplayId);
             _rotateButtonAndCanvas.RunFor(NativeMethods.Dmdo90, _currentButton);
             SetWindowMargins();
         }
 
-        private void BtnReset_OnClick(object sender, RoutedEventArgs e)
+        private void BtnResetOnClick(object sender, RoutedEventArgs e)
         {
             _rotateDisplay.RunFor(NativeMethods.DmdoDefault, _currentDisplayId);
             _rotateButtonAndCanvas.RunFor(NativeMethods.DmdoDefault, _currentButton);
@@ -195,6 +216,20 @@ namespace DisplayRotation
             {
                 _autoStart.Disable();
             }
+        }
+
+        public void CheckScreenCountAndRestore(object sender, RoutedEventArgs e)
+        {
+            IScreenCount screenCount = new ScreenCount();
+
+            if (_screenCount != screenCount.Value)
+            {
+                ReloadClick(sender, e);
+            }
+
+
+            Show();
+            WindowState = WindowState.Normal;
         }
 
         #region Flyout

@@ -11,11 +11,11 @@ namespace DisplayRotation.Internal
 {
     public class TaskbarIconConfiguration : ITaskbarIconConfiguration
     {
-        private readonly MainWindow _mainWindow;
-        private readonly TaskbarIcon _taskbarIcon;
         private readonly IActiveDevices _activeDevices;
-        private readonly IRotateDisplay _rotateDisplay;
+        private readonly MainWindow _mainWindow;
         private readonly IRotateButtonAndCanvas _rotateButtonAndCanvas;
+        private readonly IRotateDisplay _rotateDisplay;
+        private readonly TaskbarIcon _taskbarIcon;
 
         /// <summary>
         /// </summary>
@@ -69,7 +69,6 @@ namespace DisplayRotation.Internal
         /// </summary>
         public void Run()
         {
-            StartMinimized();
             var filePath = Assembly.GetEntryAssembly().Location;
             if (filePath != null)
             {
@@ -81,7 +80,7 @@ namespace DisplayRotation.Internal
 
         /// <summary>
         /// </summary>
-        private void StartMinimized()
+        public void StartMinimized()
         {
             _taskbarIcon.Visibility = Visibility.Visible;
             _mainWindow.Hide();
@@ -118,7 +117,6 @@ namespace DisplayRotation.Internal
                               };
 
                 //anticlockwise
-
                 var anticlockwiseItem = new MenuItem();
                 anticlockwiseItem.Header = "Upright 'anticlockwise'";
                 anticlockwiseItem.Icon = new PackIconMaterial
@@ -216,14 +214,12 @@ namespace DisplayRotation.Internal
 
         private void ContextMenuItemRestoreClick(object sender, EventArgs e)
         {
-            _mainWindow.Show();
-            _mainWindow.WindowState = WindowState.Normal;
+            _mainWindow.CheckScreenCountAndRestore(sender, null);
         }
 
         private void TaskbarIconDoubleClick(object sender, EventArgs e)
         {
-            _mainWindow.Show();
-            _mainWindow.WindowState = WindowState.Normal;
+            _mainWindow.CheckScreenCountAndRestore(sender, null);
         }
     }
 }
