@@ -11,11 +11,7 @@ namespace DisplayRotation.Core
 
         public AutoStart(string appName)
         {
-            if (appName == null)
-            {
-                throw new ArgumentNullException(nameof(appName));
-            }
-            _appName = appName;
+            _appName = appName ?? throw new ArgumentNullException(nameof(appName));
         }
 
         public void Enable()
