@@ -1,5 +1,5 @@
 using System.Windows.Controls;
-using EvilBaschdi.Core.DotNetExtensions;
+using EvilBaschdi.Core;
 
 namespace DisplayRotation.Internal
 {

@@ -5,12 +5,14 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using DisplayRotation.Core;
 using DisplayRotation.Internal;
 using DisplayRotation.Properties;
-using EvilBaschdi.Core.Application;
-using EvilBaschdi.Core.Wpf;
+using EvilBaschdi.Core.Extensions;
+using EvilBaschdi.CoreExtended.AppHelpers;
+using EvilBaschdi.CoreExtended.Metro;
 using MahApps.Metro.Controls;
+using IScreenCount = DisplayRotation.Internal.IScreenCount;
+using ScreenCount = DisplayRotation.Internal.ScreenCount;
 
 //using System.Windows.Forms;
 
@@ -27,7 +29,7 @@ namespace DisplayRotation
         private readonly int _overrideProtection;
         private readonly IRotateButtonAndCanvas _rotateButtonAndCanvas;
         private readonly IRotateDisplay _rotateDisplay;
-        private readonly IMetroStyle _style;
+        private readonly IApplicationStyle _applicationStyle;
         private IAutoStart _autoStart;
         private Button _currentButton;
         private uint _currentDisplayId;
@@ -37,10 +39,11 @@ namespace DisplayRotation
         public MainWindow()
         {
             InitializeComponent();
-            ISettings coreSettings = new CoreSettings(Settings.Default);
+            IAppSettingsBase appSettingsBase = new AppSettingsBase(Settings.Default);
+            IApplicationStyleSettings applicationStyleSettings = new ApplicationStyleSettings(appSettingsBase);
             IThemeManagerHelper themeManagerHelper = new ThemeManagerHelper();
-            _style = new MetroStyle(this, Accent, ThemeSwitch, coreSettings, themeManagerHelper);
-            _style.Load(true);
+            _applicationStyle = new ApplicationStyle(this, Accent, ThemeSwitch, applicationStyleSettings, themeManagerHelper);
+            _applicationStyle.Load(true);
 
             _rotateDisplay = new RotateDisplay();
             _rotateButtonAndCanvas = new RotateButtonAndCanvas();
@@ -275,7 +278,8 @@ namespace DisplayRotation
             {
                 return;
             }
-            _style.SaveStyle();
+
+            _applicationStyle.SaveStyle();
         }
 
         private void Theme(object sender, EventArgs e)
@@ -284,15 +288,17 @@ namespace DisplayRotation
             {
                 return;
             }
+
             var routedEventArgs = e as RoutedEventArgs;
             if (routedEventArgs != null)
             {
-                _style.SetTheme(sender, routedEventArgs);
+                _applicationStyle.SetTheme(sender, routedEventArgs);
             }
             else
             {
-                _style.SetTheme(sender);
+                _applicationStyle.SetTheme(sender);
             }
+
             ReloadDisplayButtonStyle();
         }
 
@@ -302,7 +308,8 @@ namespace DisplayRotation
             {
                 return;
             }
-            _style.SetAccent(sender, e);
+
+            _applicationStyle.SetAccent(sender, e);
             ReloadDisplayButtonStyle();
         }
 
