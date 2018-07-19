@@ -46,8 +46,8 @@
     <PackageReference Include="EvilBaschdi.Core" Version="2018.416.22.11" />
     <PackageReference Include="EvilBaschdi.CoreExtended" Version="2018.424.21.15" />
     <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="1.0.8" />
-    <PackageReference Include="MahApps.Metro" Version="1.6.4" />
-    <PackageReference Include="MahApps.Metro.IconPacks" Version="2.2.0" />
+    <PackageReference Include="MahApps.Metro" Version="1.6.5" />
+    <PackageReference Include="MahApps.Metro.IconPacks" Version="2.3.0" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
