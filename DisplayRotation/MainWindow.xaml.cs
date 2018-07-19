@@ -76,7 +76,7 @@ namespace DisplayRotation
 
         private void ConfigureAutoRun()
         {
-            _autoStart = new AutoStart("DisplayRotation");
+            _autoStart = new AutoStart("DisplayRotation",Assembly.GetExecutingAssembly().Location);
             AutoStartSwitch.IsChecked = _autoStart.IsEnabled;
         }
 
