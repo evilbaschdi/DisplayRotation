@@ -1,18 +1,13 @@
 ﻿using System;
-using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using DisplayRotation.Internal;
-using DisplayRotation.Properties;
-using EvilBaschdi.Core.Extensions;
 using EvilBaschdi.CoreExtended.AppHelpers;
 using EvilBaschdi.CoreExtended.Metro;
 using MahApps.Metro.Controls;
-using IScreenCount = DisplayRotation.Internal.IScreenCount;
-using ScreenCount = DisplayRotation.Internal.ScreenCount;
 
 //using System.Windows.Forms;
 
@@ -29,7 +24,7 @@ namespace DisplayRotation
         private readonly int _overrideProtection;
         private readonly IRotateButtonAndCanvas _rotateButtonAndCanvas;
         private readonly IRotateDisplay _rotateDisplay;
-        private readonly IApplicationStyle _applicationStyle;
+        private readonly IThemeManagerHelper _themeManagerHelper;
         private IAutoStart _autoStart;
         private Button _currentButton;
         private uint _currentDisplayId;
@@ -39,21 +34,32 @@ namespace DisplayRotation
         public MainWindow()
         {
             InitializeComponent();
-            IAppSettingsBase appSettingsBase = new AppSettingsBase(Settings.Default);
-            IApplicationStyleSettings applicationStyleSettings = new ApplicationStyleSettings(appSettingsBase);
-            IThemeManagerHelper themeManagerHelper = new ThemeManagerHelper();
-            _applicationStyle = new ApplicationStyle(this, Accent, ThemeSwitch, applicationStyleSettings, themeManagerHelper);
-            _applicationStyle.Load(true);
+            _themeManagerHelper = new ThemeManagerHelper();
+            IApplicationStyle applicationStyle = new ApplicationStyle(_themeManagerHelper);
+            applicationStyle.Load(true);
 
             _rotateDisplay = new RotateDisplay();
             _rotateButtonAndCanvas = new RotateButtonAndCanvas();
             Load();
-            var linkerTime = Assembly.GetExecutingAssembly().GetLinkerTime();
-            LinkerTime.Content = linkerTime.ToString(CultureInfo.InvariantCulture);
+            var assembly = typeof(MainWindow).Assembly;
+            LinkerTime.Content = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
 
             Application.Current.Exit += CurrentExit;
             _overrideProtection = 1;
             ConfigureAutoRun();
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            foreach (Window currentWindow in Application.Current.Windows)
+            {
+                if (currentWindow != Application.Current.MainWindow)
+                {
+                    currentWindow.Close();
+                }
+            }
+
+            base.OnClosed(e);
         }
 
         private void Load()
@@ -61,7 +67,7 @@ namespace DisplayRotation
             IActiveDevices activeDevices = new ActiveDevices();
             BuildDeviceButtons(activeDevices);
             ITaskbarIconConfiguration taskbarIconConfiguration =
-                new TaskbarIconConfiguration(this, DisplayRotationTaskbarIcon, activeDevices, _rotateDisplay, _rotateButtonAndCanvas);
+                new TaskbarIconConfiguration(this, DisplayRotationTaskbarIcon, activeDevices, _rotateDisplay, _rotateButtonAndCanvas, _themeManagerHelper);
             taskbarIconConfiguration.StartMinimized();
             taskbarIconConfiguration.Run();
             IScreenCount screenCount = new ScreenCount();
@@ -76,7 +82,7 @@ namespace DisplayRotation
 
         private void ConfigureAutoRun()
         {
-            _autoStart = new AutoStart("DisplayRotation",Assembly.GetExecutingAssembly().Location);
+            _autoStart = new AutoStart("DisplayRotation", Assembly.GetExecutingAssembly().Location);
             AutoStartSwitch.IsChecked = _autoStart.IsEnabled;
         }
 
@@ -269,64 +275,5 @@ namespace DisplayRotation
         }
 
         #endregion Flyout
-
-        #region MetroStyle
-
-        private void SaveStyleClick(object sender, RoutedEventArgs e)
-        {
-            if (_overrideProtection == 0)
-            {
-                return;
-            }
-
-            _applicationStyle.SaveStyle();
-        }
-
-        private void Theme(object sender, EventArgs e)
-        {
-            if (_overrideProtection == 0)
-            {
-                return;
-            }
-
-            var routedEventArgs = e as RoutedEventArgs;
-            if (routedEventArgs != null)
-            {
-                _applicationStyle.SetTheme(sender, routedEventArgs);
-            }
-            else
-            {
-                _applicationStyle.SetTheme(sender);
-            }
-
-            ReloadDisplayButtonStyle();
-        }
-
-        private void AccentOnSelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (_overrideProtection == 0)
-            {
-                return;
-            }
-
-            _applicationStyle.SetAccent(sender, e);
-            ReloadDisplayButtonStyle();
-        }
-
-        private void ReloadDisplayButtonStyle()
-        {
-            var buttons = DisplayStackPanel.Children.Cast<Canvas>().SelectMany(childCanvas => childCanvas.Children.Cast<Button>());
-
-            foreach (var button in buttons)
-            {
-                button.Background = (SolidColorBrush) FindResource("AccentColorBrush");
-                button.BorderBrush = (SolidColorBrush) FindResource("HighlightBrush");
-                button.Foreground = Brushes.Black;
-            }
-
-            _currentButton.Foreground = Brushes.White;
-        }
-
-        #endregion MetroStyle
     }
 }

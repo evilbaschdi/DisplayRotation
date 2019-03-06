@@ -4,7 +4,12 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using EvilBaschdi.CoreExtended.Metro;
+using EvilBaschdi.CoreExtended.Mvvm;
+using EvilBaschdi.CoreExtended.Mvvm.View;
+using EvilBaschdi.CoreExtended.Mvvm.ViewModel;
 using Hardcodet.Wpf.TaskbarNotification;
+using JetBrains.Annotations;
 using MahApps.Metro.IconPacks;
 
 namespace DisplayRotation.Internal
@@ -12,10 +17,12 @@ namespace DisplayRotation.Internal
     public class TaskbarIconConfiguration : ITaskbarIconConfiguration
     {
         private readonly IActiveDevices _activeDevices;
-        private readonly MainWindow _mainWindow;
+        private readonly Assembly _assembly = typeof(MainWindow).Assembly;
+        private readonly MainWindow _mainWindow = (MainWindow) Application.Current.MainWindow;
         private readonly IRotateButtonAndCanvas _rotateButtonAndCanvas;
         private readonly IRotateDisplay _rotateDisplay;
         private readonly TaskbarIcon _taskbarIcon;
+        private readonly IThemeManagerHelper _themeManagerHelper;
 
         /// <summary>
         /// </summary>
@@ -24,6 +31,7 @@ namespace DisplayRotation.Internal
         /// <param name="activeDevices"></param>
         /// <param name="rotateDisplay"></param>
         /// <param name="rotateButtonAndCanvas"></param>
+        /// <param name="themeManagerHelper"></param>
         /// <exception cref="ArgumentNullException">
         ///     <paramref name="mainWindow" /> is <see langword="null" />.
         ///     <paramref name="taskbarIcon" /> is <see langword="null" />.
@@ -32,13 +40,14 @@ namespace DisplayRotation.Internal
         ///     <paramref name="rotateButtonAndCanvas" /> is <see langword="null" />.
         /// </exception>
         public TaskbarIconConfiguration(MainWindow mainWindow, TaskbarIcon taskbarIcon, IActiveDevices activeDevices, IRotateDisplay rotateDisplay,
-                                        IRotateButtonAndCanvas rotateButtonAndCanvas)
+                                        IRotateButtonAndCanvas rotateButtonAndCanvas, [NotNull] IThemeManagerHelper themeManagerHelper)
         {
-            _mainWindow = mainWindow ?? throw new ArgumentNullException(nameof(mainWindow));
+            //_mainWindow = mainWindow ?? throw new ArgumentNullException(nameof(mainWindow));
             _taskbarIcon = taskbarIcon ?? throw new ArgumentNullException(nameof(taskbarIcon));
             _activeDevices = activeDevices ?? throw new ArgumentNullException(nameof(activeDevices));
             _rotateDisplay = rotateDisplay ?? throw new ArgumentNullException(nameof(rotateDisplay));
             _rotateButtonAndCanvas = rotateButtonAndCanvas ?? throw new ArgumentNullException(nameof(rotateButtonAndCanvas));
+            _themeManagerHelper = themeManagerHelper ?? throw new ArgumentNullException(nameof(themeManagerHelper));
         }
 
         /// <summary>
@@ -48,8 +57,7 @@ namespace DisplayRotation.Internal
         /// </summary>
         public void Run()
         {
-            var filePath = Assembly.GetEntryAssembly().Location;
-            _taskbarIcon.Icon = Icon.ExtractAssociatedIcon(filePath);
+            _taskbarIcon.Icon = Icon.ExtractAssociatedIcon(_assembly.Location);
             _taskbarIcon.ContextMenu = TaskbarIconContextMenu();
             _taskbarIcon.TrayMouseDoubleClick += TaskbarIconDoubleClick;
         }
@@ -164,6 +172,14 @@ namespace DisplayRotation.Internal
                 contextMenu.Items.Add(parent);
             }
 
+            var aboutApplication = new MenuItem();
+            aboutApplication.Header = "About...";
+            aboutApplication.Icon = new PackIconMaterial
+                                    {
+                                        Kind = PackIconMaterialKind.Information
+                                    };
+            aboutApplication.Click += ContextMenuItemAboutClick;
+
             var restoreApplication = new MenuItem
                                      {
                                          Header = "Restore application",
@@ -185,9 +201,9 @@ namespace DisplayRotation.Internal
             closeApplication.Click += ContextMenuItemCloseClick;
 
             contextMenu.Items.Add(new Separator());
+            contextMenu.Items.Add(aboutApplication);
             contextMenu.Items.Add(restoreApplication);
             contextMenu.Items.Add(closeApplication);
-
 
             return contextMenu;
         }
@@ -198,6 +214,14 @@ namespace DisplayRotation.Internal
         {
             _taskbarIcon.Dispose();
             _mainWindow.Close();
+        }
+
+        private void ContextMenuItemAboutClick(object sender, RoutedEventArgs e)
+        {
+            var aboutWindow = new AboutWindow();
+            IAboutWindowContent aboutWindowContent = new AboutWindowContent(_assembly, $@"{AppDomain.CurrentDomain.BaseDirectory}\512.png");
+            aboutWindow.DataContext = new AboutViewModel(aboutWindowContent, _themeManagerHelper);
+            aboutWindow.Show();
         }
 
         private void ContextMenuItemRestoreClick(object sender, EventArgs e)

@@ -31,7 +31,7 @@
     <!-- Grid -->
     <Grid>
         <!-- Taskbar Icon -->
-        <tb:TaskbarIcon Name="DisplayRotationTaskbarIcon" ToolTip="Change Display Rotation" ToolTipText="Change Display Rotation"/>
+        <tb:TaskbarIcon Name="DisplayRotationTaskbarIcon" ToolTip="Change Display Rotation" ToolTipText="Change Display Rotation" />
         <StackPanel>
             <!-- Clockwise -->
             <StackPanel Orientation="Horizontal" VerticalAlignment="Top" CanHorizontallyScroll="True">
@@ -77,32 +77,6 @@
                                                IsCheckedChanged="AutoStartIsCheckedChanged"
                                                OnSwitchBrush="{DynamicResource AccentColorBrush}" OnLabel="Yes   "
                                                OffSwitchBrush="{DynamicResource AccentColorBrush}" OffLabel="No   " />
-                    </StackPanel>
-                    <!-- Horizontal Line -->
-                    <StackPanel Margin="15,10,15,0" Orientation="Vertical">
-                        <Separator Background="{DynamicResource AccentColorBrush}" />
-                    </StackPanel>
-                    <!-- Theme -->
-                    <StackPanel Margin="10,5,0,0" Orientation="Horizontal">
-                        <Label Width="50" Margin="0,5,0,0" HorizontalAlignment="Left"
-                               VerticalAlignment="Top" Content="Theme" />
-                        <controls:ToggleSwitch Name="ThemeSwitch" Margin="10,1,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="12" IsCheckedChanged="Theme"
-                                               OnSwitchBrush="{DynamicResource AccentColorBrush}" OnLabel="Dark"
-                                               OffSwitchBrush="{DynamicResource AccentColorBrush}" OffLabel="Light" />
-                    </StackPanel>
-                    <!-- Accent -->
-                    <StackPanel Margin="10,5,0,0" Orientation="Horizontal">
-                        <Label Width="50" Margin="0,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Accent:" />
-                        <ComboBox Name="Accent" Width="165" Margin="10,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" SelectionChanged="AccentOnSelectionChanged" />
-                    </StackPanel>
-                    <!-- Save Style -->
-                    <StackPanel Margin="10,5,0,0" Orientation="Horizontal">
-                        <Button Name="SaveStyle" Width="165" Margin="60,5,0,0" Click="SaveStyleClick">
-                            <StackPanel Orientation="Horizontal">
-                                <iconPacks:PackIconMaterial Kind="ContentSaveSettings" Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                <TextBlock Margin="5,0,0,0" VerticalAlignment="Center" Text="save style" />
-                            </StackPanel>
-                        </Button>
                     </StackPanel>
                     <!-- Horizontal Line -->
                     <StackPanel Margin="15,10,15,0" Orientation="Vertical">
