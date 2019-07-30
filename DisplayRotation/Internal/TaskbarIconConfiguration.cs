@@ -26,20 +26,18 @@ namespace DisplayRotation.Internal
 
         /// <summary>
         /// </summary>
-        /// <param name="mainWindow"></param>
         /// <param name="taskbarIcon"></param>
         /// <param name="activeDevices"></param>
         /// <param name="rotateDisplay"></param>
         /// <param name="rotateButtonAndCanvas"></param>
         /// <param name="themeManagerHelper"></param>
         /// <exception cref="ArgumentNullException">
-        ///     <paramref name="mainWindow" /> is <see langword="null" />.
         ///     <paramref name="taskbarIcon" /> is <see langword="null" />.
         ///     <paramref name="activeDevices" /> is <see langword="null" />.
         ///     <paramref name="rotateDisplay" /> is <see langword="null" />.
         ///     <paramref name="rotateButtonAndCanvas" /> is <see langword="null" />.
         /// </exception>
-        public TaskbarIconConfiguration(MainWindow mainWindow, TaskbarIcon taskbarIcon, IActiveDevices activeDevices, IRotateDisplay rotateDisplay,
+        public TaskbarIconConfiguration(TaskbarIcon taskbarIcon, IActiveDevices activeDevices, IRotateDisplay rotateDisplay,
                                         IRotateButtonAndCanvas rotateButtonAndCanvas, [NotNull] IThemeManagerHelper themeManagerHelper)
         {
             //_mainWindow = mainWindow ?? throw new ArgumentNullException(nameof(mainWindow));
@@ -50,9 +48,6 @@ namespace DisplayRotation.Internal
             _themeManagerHelper = themeManagerHelper ?? throw new ArgumentNullException(nameof(themeManagerHelper));
         }
 
-        /// <summary>
-        ///     Initialisiert eine neue Instanz der <see cref="T:System.Object" />-Klasse.
-        /// </summary>
         /// <summary>
         /// </summary>
         public void Run()
@@ -210,7 +205,7 @@ namespace DisplayRotation.Internal
 
         // ReSharper restore UseObjectOrCollectionInitializer
 
-        private void ContextMenuItemCloseClick(object sender, EventArgs e)
+        private void ContextMenuItemCloseClick(object sender, RoutedEventArgs e)
         {
             _taskbarIcon.Dispose();
             _mainWindow.Close();
@@ -218,18 +213,20 @@ namespace DisplayRotation.Internal
 
         private void ContextMenuItemAboutClick(object sender, RoutedEventArgs e)
         {
-            var aboutWindow = new AboutWindow();
             IAboutWindowContent aboutWindowContent = new AboutWindowContent(_assembly, $@"{AppDomain.CurrentDomain.BaseDirectory}\512.png");
-            aboutWindow.DataContext = new AboutViewModel(aboutWindowContent, _themeManagerHelper);
-            aboutWindow.Show();
+            var aboutWindow = new AboutWindow
+                              {
+                                  DataContext = new AboutViewModel(aboutWindowContent, _themeManagerHelper)
+                              };
+            aboutWindow.ShowDialog();
         }
 
-        private void ContextMenuItemRestoreClick(object sender, EventArgs e)
+        private void ContextMenuItemRestoreClick(object sender, RoutedEventArgs e)
         {
             _mainWindow.CheckScreenCountAndRestore(sender, null);
         }
 
-        private void TaskbarIconDoubleClick(object sender, EventArgs e)
+        private void TaskbarIconDoubleClick(object sender, RoutedEventArgs e)
         {
             _mainWindow.CheckScreenCountAndRestore(sender, null);
         }

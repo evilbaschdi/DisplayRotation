@@ -7,6 +7,9 @@ using System.Windows.Media;
 using DisplayRotation.Internal;
 using EvilBaschdi.CoreExtended.AppHelpers;
 using EvilBaschdi.CoreExtended.Metro;
+using EvilBaschdi.CoreExtended.Mvvm;
+using EvilBaschdi.CoreExtended.Mvvm.View;
+using EvilBaschdi.CoreExtended.Mvvm.ViewModel;
 using MahApps.Metro.Controls;
 
 //using System.Windows.Forms;
@@ -21,6 +24,7 @@ namespace DisplayRotation
     // ReSharper disable once RedundantExtendsListEntry
     public partial class MainWindow : MetroWindow
     {
+        private readonly Assembly _assembly = typeof(MainWindow).Assembly;
         private readonly int _overrideProtection;
         private readonly IRotateButtonAndCanvas _rotateButtonAndCanvas;
         private readonly IRotateDisplay _rotateDisplay;
@@ -29,7 +33,6 @@ namespace DisplayRotation
         private Button _currentButton;
         private uint _currentDisplayId;
         private int _screenCount;
-
 
         public MainWindow()
         {
@@ -41,8 +44,6 @@ namespace DisplayRotation
             _rotateDisplay = new RotateDisplay();
             _rotateButtonAndCanvas = new RotateButtonAndCanvas();
             Load();
-            var assembly = typeof(MainWindow).Assembly;
-            LinkerTime.Content = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
 
             Application.Current.Exit += CurrentExit;
             _overrideProtection = 1;
@@ -67,7 +68,7 @@ namespace DisplayRotation
             IActiveDevices activeDevices = new ActiveDevices();
             BuildDeviceButtons(activeDevices);
             ITaskbarIconConfiguration taskbarIconConfiguration =
-                new TaskbarIconConfiguration(this, DisplayRotationTaskbarIcon, activeDevices, _rotateDisplay, _rotateButtonAndCanvas, _themeManagerHelper);
+                new TaskbarIconConfiguration(DisplayRotationTaskbarIcon, activeDevices, _rotateDisplay, _rotateButtonAndCanvas, _themeManagerHelper);
             taskbarIconConfiguration.StartMinimized();
             taskbarIconConfiguration.Run();
             IScreenCount screenCount = new ScreenCount();
@@ -80,10 +81,21 @@ namespace DisplayRotation
             Load();
         }
 
+        private void AboutWindowClick(object sender, RoutedEventArgs e)
+        {
+            IAboutWindowContent aboutWindowContent = new AboutWindowContent(_assembly, $@"{AppDomain.CurrentDomain.BaseDirectory}\512.png");
+
+            var aboutWindow = new AboutWindow
+                              {
+                                  DataContext = new AboutViewModel(aboutWindowContent, _themeManagerHelper)
+                              };
+
+            aboutWindow.ShowDialog();
+        }
+
         private void ConfigureAutoRun()
         {
             _autoStart = new AutoStart("DisplayRotation", Assembly.GetExecutingAssembly().Location);
-            AutoStartSwitch.IsChecked = _autoStart.IsEnabled;
         }
 
 
@@ -119,7 +131,7 @@ namespace DisplayRotation
                                         Name = $"ButtonDisplay{device.Id}",
                                         Height = buttonHeight,
                                         Width = buttonWidth,
-                                        Background = (SolidColorBrush) FindResource("AccentColorBrush"),
+                                        Background = (SolidColorBrush) FindResource("MahApps.Brushes.AccentBase"),
                                         Content = new TextBlock
                                                   {
                                                       //Text = $"{displayHelper.Name}{Environment.NewLine}{displayHelper.Width} x {displayHelper.Height}",
@@ -151,7 +163,7 @@ namespace DisplayRotation
             if (DisplayStackPanel.Children.Cast<Canvas>().Any())
             {
                 var firstButton = DisplayStackPanel.Children.Cast<Canvas>().SelectMany(childCanvas => childCanvas.Children.Cast<Button>()).First();
-                firstButton.BorderBrush = (SolidColorBrush) FindResource("HighlightBrush");
+                firstButton.BorderBrush = (SolidColorBrush) FindResource("MahApps.Brushes.Highlight");
                 firstButton.Foreground = Brushes.White;
                 _currentDisplayId = (uint) firstButton.ToolTip;
                 _currentButton = firstButton;
@@ -181,7 +193,7 @@ namespace DisplayRotation
             }
 
             var button = (Button) sender;
-            button.BorderBrush = (SolidColorBrush) FindResource("HighlightBrush");
+            button.BorderBrush = (SolidColorBrush) FindResource("MahApps.Brushes.Highlight");
             button.Foreground = Brushes.White;
             _currentDisplayId = (uint) button.ToolTip;
             _currentButton = button;
@@ -240,40 +252,5 @@ namespace DisplayRotation
             Show();
             WindowState = WindowState.Normal;
         }
-
-        #region Flyout
-
-        private void ToggleSettingsFlyoutClick(object sender, RoutedEventArgs e)
-        {
-            ToggleFlyout(0);
-        }
-
-        private void ToggleFlyout(int index, bool stayOpen = false)
-        {
-            var activeFlyout = (Flyout) Flyouts.Items[index];
-            if (activeFlyout == null)
-            {
-                return;
-            }
-
-            foreach (
-                var nonactiveFlyout in
-                Flyouts.Items.Cast<Flyout>()
-                       .Where(nonactiveFlyout => nonactiveFlyout.IsOpen && nonactiveFlyout.Name != activeFlyout.Name))
-            {
-                nonactiveFlyout.IsOpen = false;
-            }
-
-            if (activeFlyout.IsOpen && stayOpen)
-            {
-                activeFlyout.IsOpen = true;
-            }
-            else
-            {
-                activeFlyout.IsOpen = !activeFlyout.IsOpen;
-            }
-        }
-
-        #endregion Flyout
     }
 }
