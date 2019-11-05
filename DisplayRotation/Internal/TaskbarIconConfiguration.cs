@@ -167,12 +167,14 @@ namespace DisplayRotation.Internal
                 contextMenu.Items.Add(parent);
             }
 
-            var aboutApplication = new MenuItem();
-            aboutApplication.Header = "About...";
-            aboutApplication.Icon = new PackIconMaterial
-                                    {
-                                        Kind = PackIconMaterialKind.Information
-                                    };
+            var aboutApplication = new MenuItem
+                                   {
+                                       Header = "About...",
+                                       Icon = new PackIconMaterial
+                                              {
+                                                  Kind = PackIconMaterialKind.Information
+                                              }
+                                   };
             aboutApplication.Click += ContextMenuItemAboutClick;
 
             var restoreApplication = new MenuItem

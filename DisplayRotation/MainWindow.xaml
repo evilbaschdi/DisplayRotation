@@ -12,13 +12,13 @@
     <!--  RightWindowCommands  -->
     <controls:MetroWindow.RightWindowCommands>
         <controls:WindowCommands>
-            <!-- Reload -->
+            <!-- Reload --><!--
             <Button Name="Reload" Click="ReloadClick">
                 <StackPanel Orientation="Horizontal">
                     <iconPacks:PackIconMaterial Kind="Reload" Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     <TextBlock Margin="5 0 0 0" VerticalAlignment="Center" Text="reload" />
                 </StackPanel>
-            </Button>
+            </Button>-->
             <!-- About -->
             <Button Click="AboutWindowClick">
                 <StackPanel Orientation="Horizontal">
