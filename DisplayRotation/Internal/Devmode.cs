@@ -1,11 +1,16 @@
 using System.Runtime.InteropServices;
 
+// ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable FieldCanBeMadeReadOnly.Global
+
 namespace DisplayRotation.Internal
 {
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    // ReSharper disable once IdentifierTypo
     public struct Devmode
     {
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)] public string dmDeviceName;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+        public string dmDeviceName;
 
         public short dmSpecVersion;
         public short dmDriverVersion;
@@ -22,7 +27,8 @@ namespace DisplayRotation.Internal
         public short dmTTOption;
         public short dmCollate;
 
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)] public string dmFormName;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+        public string dmFormName;
 
         public short dmLogPixels;
         public short dmBitsPerPel;

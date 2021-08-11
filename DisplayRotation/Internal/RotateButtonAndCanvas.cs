@@ -1,4 +1,3 @@
-using System.Windows;
 using System.Windows.Controls;
 
 namespace DisplayRotation.Internal
@@ -7,9 +6,9 @@ namespace DisplayRotation.Internal
     {
         public void RunFor(int rotation, Button button)
         {
-            var x = 10d;
-            var w = 192d;
-            var h = 108d;
+            const double x = 10d;
+            const double w = 192d;
+            const double h = 108d;
 
             switch (rotation)
             {
@@ -17,7 +16,7 @@ namespace DisplayRotation.Internal
                 case NativeMethods.Dmdo270:
                     button.Height = w;
                     button.Width = h;
-                    ((Canvas) button.Parent).Margin = new Thickness(x, 0, h, 0);
+                    ((Canvas) button.Parent).Margin = new(x, 0, h, 0);
                     break;
 
                 case NativeMethods.Dmdo180:
@@ -25,7 +24,7 @@ namespace DisplayRotation.Internal
 
                     button.Height = h;
                     button.Width = w;
-                    ((Canvas) button.Parent).Margin = new Thickness(x, 0, w, 0);
+                    ((Canvas) button.Parent).Margin = new(x, 0, w, 0);
                     break;
             }
         }

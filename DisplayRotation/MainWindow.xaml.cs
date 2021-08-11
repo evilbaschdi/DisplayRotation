@@ -5,11 +5,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using DisplayRotation.Internal;
+using EvilBaschdi.CoreExtended;
 using EvilBaschdi.CoreExtended.AppHelpers;
-using EvilBaschdi.CoreExtended.Metro;
-using EvilBaschdi.CoreExtended.Mvvm;
-using EvilBaschdi.CoreExtended.Mvvm.View;
-using EvilBaschdi.CoreExtended.Mvvm.ViewModel;
+using EvilBaschdi.CoreExtended.Controls.About;
 using MahApps.Metro.Controls;
 
 //using System.Windows.Forms;
@@ -28,7 +26,7 @@ namespace DisplayRotation
         private readonly int _overrideProtection;
         private readonly IRotateButtonAndCanvas _rotateButtonAndCanvas;
         private readonly IRotateDisplay _rotateDisplay;
-        private readonly IThemeManagerHelper _themeManagerHelper;
+
         private IAutoStart _autoStart;
         private Button _currentButton;
         private uint _currentDisplayId;
@@ -37,8 +35,8 @@ namespace DisplayRotation
         public MainWindow()
         {
             InitializeComponent();
-            _themeManagerHelper = new ThemeManagerHelper();
-            IApplicationStyle applicationStyle = new ApplicationStyle(_themeManagerHelper);
+
+            IApplicationStyle applicationStyle = new ApplicationStyle();
             applicationStyle.Load(true);
 
             _rotateDisplay = new RotateDisplay();
@@ -68,14 +66,15 @@ namespace DisplayRotation
             IActiveDevices activeDevices = new ActiveDevices();
             BuildDeviceButtons(activeDevices);
             ITaskbarIconConfiguration taskbarIconConfiguration =
-                new TaskbarIconConfiguration(DisplayRotationTaskbarIcon, activeDevices, _rotateDisplay, _rotateButtonAndCanvas, _themeManagerHelper);
+                new TaskbarIconConfiguration(DisplayRotationTaskbarIcon, activeDevices, _rotateDisplay, _rotateButtonAndCanvas);
             taskbarIconConfiguration.StartMinimized();
             taskbarIconConfiguration.Run();
             IScreenCount screenCount = new ScreenCount();
             _screenCount = screenCount.Value;
         }
 
-        private void ReloadClick(object sender, RoutedEventArgs e)
+        // ReSharper disable once UnusedParameter.Local
+        private void ReloadClick()
         {
             DisplayStackPanel.Children.Clear();
             Load();
@@ -83,11 +82,11 @@ namespace DisplayRotation
 
         private void AboutWindowClick(object sender, RoutedEventArgs e)
         {
-            IAboutWindowContent aboutWindowContent = new AboutWindowContent(_assembly, $@"{AppDomain.CurrentDomain.BaseDirectory}\512.png");
+            IAboutContent aboutWindowContent = new AboutContent(_assembly, $@"{AppDomain.CurrentDomain.BaseDirectory}\512.png");
 
             var aboutWindow = new AboutWindow
                               {
-                                  DataContext = new AboutViewModel(aboutWindowContent, _themeManagerHelper)
+                                  DataContext = new AboutViewModel(aboutWindowContent)
                               };
 
             aboutWindow.ShowDialog();
@@ -115,11 +114,11 @@ namespace DisplayRotation
             base.OnStateChanged(e);
         }
 
-        public void BuildDeviceButtons(IActiveDevices activeDevices)
+        private void BuildDeviceButtons(IActiveDevices activeDevices)
         {
-            var x = 10;
-            var w = 192;
-            var h = 108;
+            const int x = 10;
+            const int w = 192;
+            const int h = 108;
 
             foreach (var device in activeDevices.Value.OrderBy(d => d.PositionX))
             {
@@ -139,7 +138,7 @@ namespace DisplayRotation
                                                       TextAlignment = TextAlignment.Center,
                                                       TextWrapping = TextWrapping.Wrap
                                                   },
-                                        BorderThickness = new Thickness(2),
+                                        BorderThickness = new(2),
                                         ToolTip = device.Id
                                     };
 
@@ -148,7 +147,7 @@ namespace DisplayRotation
                 var displayCanvas = new Canvas
                                     {
                                         Name = $"CanvasDisplay{device.Id}",
-                                        Margin = new Thickness(x, 0, buttonWidth, 0)
+                                        Margin = new(x, 0, buttonWidth, 0)
                                     };
                 displayCanvas.Children.Add(displayButton);
                 DisplayStackPanel.Children.Add(displayCanvas);
@@ -160,14 +159,16 @@ namespace DisplayRotation
 
         private void ActivateFirstDisplay()
         {
-            if (DisplayStackPanel.Children.Cast<Canvas>().Any())
+            if (!DisplayStackPanel.Children.Cast<Canvas>().Any())
             {
-                var firstButton = DisplayStackPanel.Children.Cast<Canvas>().SelectMany(childCanvas => childCanvas.Children.Cast<Button>()).First();
-                firstButton.BorderBrush = (SolidColorBrush) FindResource("MahApps.Brushes.Highlight");
-                firstButton.Foreground = Brushes.White;
-                _currentDisplayId = (uint) firstButton.ToolTip;
-                _currentButton = firstButton;
+                return;
             }
+
+            var firstButton = DisplayStackPanel.Children.Cast<Canvas>().SelectMany(childCanvas => childCanvas.Children.Cast<Button>()).First();
+            firstButton.BorderBrush = (SolidColorBrush) FindResource("MahApps.Brushes.Highlight");
+            firstButton.Foreground = Brushes.White;
+            _currentDisplayId = (uint) firstButton.ToolTip;
+            _currentButton = firstButton;
         }
 
         public void SetWindowMargins()
@@ -178,8 +179,8 @@ namespace DisplayRotation
 
             var childHeight = (from Canvas canvas in children from Button button in canvas.Children select button.Height).Concat(new[] { 0d }).Max() + 105d;
 
-            var windowWidth = 490d;
-            var windowHeight = 300d;
+            const double windowWidth = 490d;
+            const double windowHeight = 300d;
             Width = childWidth > windowWidth ? childWidth : windowWidth;
             Height = childHeight > windowHeight ? childHeight : windowHeight;
         }
@@ -220,16 +221,19 @@ namespace DisplayRotation
             SetWindowMargins();
         }
 
-        private void AutoStartIsCheckedChanged(object sender, EventArgs e)
+        private void AutoStartSwitchToggled(object sender, RoutedEventArgs e)
         {
-            var toggleSwitch = (ToggleSwitch) sender;
-
             if (_overrideProtection == 0)
             {
                 return;
             }
 
-            if (toggleSwitch.IsChecked.HasValue && toggleSwitch.IsChecked.Value)
+            if (!(sender is ToggleSwitch toggleSwitch))
+            {
+                return;
+            }
+
+            if (toggleSwitch.IsOn)
             {
                 _autoStart.Enable();
             }
@@ -239,18 +243,45 @@ namespace DisplayRotation
             }
         }
 
-        public void CheckScreenCountAndRestore(object sender, RoutedEventArgs e)
+        public void CheckScreenCountAndRestore()
         {
             IScreenCount screenCount = new ScreenCount();
 
             if (_screenCount != screenCount.Value)
             {
-                ReloadClick(sender, e);
+                ReloadClick();
             }
-
 
             Show();
             WindowState = WindowState.Normal;
         }
+
+        #region Fly-out
+
+        private void ToggleSettingsFlyoutClick(object sender, RoutedEventArgs e)
+        {
+            ToggleFlyout(0);
+        }
+
+        private void ToggleFlyout(int index, bool stayOpen = false)
+        {
+            var activeFlyout = (Flyout) Flyouts.Items[index];
+            if (activeFlyout == null)
+            {
+                return;
+            }
+
+            foreach (
+                var nonactiveFlyout in
+                Flyouts.Items.Cast<Flyout>()
+                       .Where(nonactiveFlyout => nonactiveFlyout.IsOpen && nonactiveFlyout.Name != activeFlyout.Name))
+            {
+                nonactiveFlyout.IsOpen = false;
+            }
+
+            activeFlyout.IsOpen = activeFlyout.IsOpen && stayOpen || !activeFlyout.IsOpen;
+        }
+
+        #endregion Fly-out
     }
 }

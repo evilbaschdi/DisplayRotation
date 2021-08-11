@@ -24,28 +24,32 @@ namespace DisplayRotation.Internal
 
                     device.cb = Marshal.SizeOf(device);
 
-                    if (device.DeviceName.Trim().Length > 0)
+                    if (device.DeviceName.Trim().Length <= 0)
                     {
-                        var helper = new DisplayHelper
-                                     {
-                                         Id = id,
-                                         Name = device.DeviceString
-                                     };
+                        continue;
+                    }
 
-                        foreach (var screen in Screen.AllScreens)
+                    var helper = new DisplayHelper
+                                 {
+                                     Id = id,
+                                     Name = device.DeviceString
+                                 };
+
+                    foreach (var screen in Screen.AllScreens)
+                    {
+                        if (!device.DeviceName.Contains(screen.DeviceName))
                         {
-                            if (device.DeviceName.Contains(screen.DeviceName))
-                            {
-                                var rectangle = screen.Bounds;
-                                helper.PositionX = rectangle.X;
-                                helper.PositionY = rectangle.Y;
-                                helper.Height = rectangle.Height;
-                                helper.Width = rectangle.Width;
-                            }
+                            continue;
                         }
 
-                        list.Add(helper);
+                        var rectangle = screen.Bounds;
+                        helper.PositionX = rectangle.X;
+                        helper.PositionY = rectangle.Y;
+                        helper.Height = rectangle.Height;
+                        helper.Width = rectangle.Width;
                     }
+
+                    list.Add(helper);
                 }
 
                 return list;

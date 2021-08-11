@@ -4,12 +4,8 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
-using EvilBaschdi.CoreExtended.Metro;
-using EvilBaschdi.CoreExtended.Mvvm;
-using EvilBaschdi.CoreExtended.Mvvm.View;
-using EvilBaschdi.CoreExtended.Mvvm.ViewModel;
+using EvilBaschdi.CoreExtended.Controls.About;
 using Hardcodet.Wpf.TaskbarNotification;
-using JetBrains.Annotations;
 using MahApps.Metro.IconPacks;
 
 namespace DisplayRotation.Internal
@@ -22,7 +18,7 @@ namespace DisplayRotation.Internal
         private readonly IRotateButtonAndCanvas _rotateButtonAndCanvas;
         private readonly IRotateDisplay _rotateDisplay;
         private readonly TaskbarIcon _taskbarIcon;
-        private readonly IThemeManagerHelper _themeManagerHelper;
+
 
         /// <summary>
         /// </summary>
@@ -30,7 +26,6 @@ namespace DisplayRotation.Internal
         /// <param name="activeDevices"></param>
         /// <param name="rotateDisplay"></param>
         /// <param name="rotateButtonAndCanvas"></param>
-        /// <param name="themeManagerHelper"></param>
         /// <exception cref="ArgumentNullException">
         ///     <paramref name="taskbarIcon" /> is <see langword="null" />.
         ///     <paramref name="activeDevices" /> is <see langword="null" />.
@@ -38,14 +33,13 @@ namespace DisplayRotation.Internal
         ///     <paramref name="rotateButtonAndCanvas" /> is <see langword="null" />.
         /// </exception>
         public TaskbarIconConfiguration(TaskbarIcon taskbarIcon, IActiveDevices activeDevices, IRotateDisplay rotateDisplay,
-                                        IRotateButtonAndCanvas rotateButtonAndCanvas, [NotNull] IThemeManagerHelper themeManagerHelper)
+                                        IRotateButtonAndCanvas rotateButtonAndCanvas)
         {
             //_mainWindow = mainWindow ?? throw new ArgumentNullException(nameof(mainWindow));
             _taskbarIcon = taskbarIcon ?? throw new ArgumentNullException(nameof(taskbarIcon));
             _activeDevices = activeDevices ?? throw new ArgumentNullException(nameof(activeDevices));
             _rotateDisplay = rotateDisplay ?? throw new ArgumentNullException(nameof(rotateDisplay));
             _rotateButtonAndCanvas = rotateButtonAndCanvas ?? throw new ArgumentNullException(nameof(rotateButtonAndCanvas));
-            _themeManagerHelper = themeManagerHelper ?? throw new ArgumentNullException(nameof(themeManagerHelper));
         }
 
         /// <summary>
@@ -78,11 +72,13 @@ namespace DisplayRotation.Internal
                 {
                     foreach (Button button in canvas.Children)
                     {
-                        if (button.Name == $"ButtonDisplay{device.Id}")
+                        if (button.Name != $"ButtonDisplay{device.Id}")
                         {
-                            currentButton = button;
-                            break;
+                            continue;
                         }
+
+                        currentButton = button;
+                        break;
                     }
                 }
 
@@ -104,7 +100,7 @@ namespace DisplayRotation.Internal
                                                        Kind = PackIconMaterialKind.ChevronLeft
                                                    }
                                         };
-                anticlockwiseItem.Click += (sender, args) =>
+                anticlockwiseItem.Click += (_, _) =>
                                            {
                                                _rotateDisplay.RunFor(NativeMethods.Dmdo90, device.Id);
                                                _rotateButtonAndCanvas.RunFor(NativeMethods.Dmdo90, currentButton);
@@ -120,7 +116,7 @@ namespace DisplayRotation.Internal
                                                    Kind = PackIconMaterialKind.ChevronUp
                                                }
                                     };
-                clockwiseItem.Click += (sender, args) =>
+                clockwiseItem.Click += (_, _) =>
                                        {
                                            _rotateDisplay.RunFor(NativeMethods.Dmdo180, device.Id);
                                            _rotateButtonAndCanvas.RunFor(NativeMethods.Dmdo180, currentButton);
@@ -136,7 +132,7 @@ namespace DisplayRotation.Internal
                                                 Kind = PackIconMaterialKind.ChevronRight
                                             }
                                  };
-                mirrorItem.Click += (sender, args) =>
+                mirrorItem.Click += (_, _) =>
                                     {
                                         _rotateDisplay.RunFor(NativeMethods.Dmdo270, device.Id);
                                         _rotateButtonAndCanvas.RunFor(NativeMethods.Dmdo270, currentButton);
@@ -152,7 +148,7 @@ namespace DisplayRotation.Internal
                                                  Kind = PackIconMaterialKind.ChevronDown
                                              }
                                   };
-                restoreItem.Click += (sender, args) =>
+                restoreItem.Click += (_, _) =>
                                      {
                                          _rotateDisplay.RunFor(NativeMethods.DmdoDefault, device.Id);
                                          _rotateButtonAndCanvas.RunFor(NativeMethods.DmdoDefault, currentButton);
@@ -215,22 +211,22 @@ namespace DisplayRotation.Internal
 
         private void ContextMenuItemAboutClick(object sender, RoutedEventArgs e)
         {
-            IAboutWindowContent aboutWindowContent = new AboutWindowContent(_assembly, $@"{AppDomain.CurrentDomain.BaseDirectory}\512.png");
+            IAboutContent aboutWindowContent = new AboutContent(_assembly, $@"{AppDomain.CurrentDomain.BaseDirectory}\512.png");
             var aboutWindow = new AboutWindow
                               {
-                                  DataContext = new AboutViewModel(aboutWindowContent, _themeManagerHelper)
+                                  DataContext = new AboutViewModel(aboutWindowContent)
                               };
             aboutWindow.ShowDialog();
         }
 
         private void ContextMenuItemRestoreClick(object sender, RoutedEventArgs e)
         {
-            _mainWindow.CheckScreenCountAndRestore(sender, null);
+            _mainWindow.CheckScreenCountAndRestore();
         }
 
         private void TaskbarIconDoubleClick(object sender, RoutedEventArgs e)
         {
-            _mainWindow.CheckScreenCountAndRestore(sender, null);
+            _mainWindow.CheckScreenCountAndRestore();
         }
     }
 }
