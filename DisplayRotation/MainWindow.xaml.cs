@@ -26,6 +26,7 @@ namespace DisplayRotation
         private readonly int _overrideProtection;
         private readonly IRotateButtonAndCanvas _rotateButtonAndCanvas;
         private readonly IRotateDisplay _rotateDisplay;
+        private readonly IRoundCorners _roundCorners;
 
         private IAutoStart _autoStart;
         private Button _currentButton;
@@ -36,8 +37,9 @@ namespace DisplayRotation
         {
             InitializeComponent();
 
-            IApplicationStyle applicationStyle = new ApplicationStyle();
-            applicationStyle.Load(true);
+            _roundCorners = new RoundCorners();
+            IApplicationStyle style = new ApplicationStyle(_roundCorners, true);
+            style.Run();
 
             _rotateDisplay = new RotateDisplay();
             _rotateButtonAndCanvas = new RotateButtonAndCanvas();
@@ -66,7 +68,7 @@ namespace DisplayRotation
             IActiveDevices activeDevices = new ActiveDevices();
             BuildDeviceButtons(activeDevices);
             ITaskbarIconConfiguration taskbarIconConfiguration =
-                new TaskbarIconConfiguration(DisplayRotationTaskbarIcon, activeDevices, _rotateDisplay, _rotateButtonAndCanvas);
+                new TaskbarIconConfiguration(DisplayRotationTaskbarIcon, activeDevices, _rotateDisplay, _rotateButtonAndCanvas, _roundCorners);
             taskbarIconConfiguration.StartMinimized();
             taskbarIconConfiguration.Run();
             IScreenCount screenCount = new ScreenCount();
@@ -86,7 +88,7 @@ namespace DisplayRotation
 
             var aboutWindow = new AboutWindow
                               {
-                                  DataContext = new AboutViewModel(aboutWindowContent)
+                                  DataContext = new AboutViewModel(aboutWindowContent, _roundCorners)
                               };
 
             aboutWindow.ShowDialog();
@@ -130,7 +132,7 @@ namespace DisplayRotation
                                         Name = $"ButtonDisplay{device.Id}",
                                         Height = buttonHeight,
                                         Width = buttonWidth,
-                                        Background = (SolidColorBrush) FindResource("MahApps.Brushes.AccentBase"),
+                                        Background = (SolidColorBrush)FindResource("MahApps.Brushes.AccentBase"),
                                         Content = new TextBlock
                                                   {
                                                       //Text = $"{displayHelper.Name}{Environment.NewLine}{displayHelper.Width} x {displayHelper.Height}",
@@ -165,9 +167,9 @@ namespace DisplayRotation
             }
 
             var firstButton = DisplayStackPanel.Children.Cast<Canvas>().SelectMany(childCanvas => childCanvas.Children.Cast<Button>()).First();
-            firstButton.BorderBrush = (SolidColorBrush) FindResource("MahApps.Brushes.Highlight");
+            firstButton.BorderBrush = (SolidColorBrush)FindResource("MahApps.Brushes.Highlight");
             firstButton.Foreground = Brushes.White;
-            _currentDisplayId = (uint) firstButton.ToolTip;
+            _currentDisplayId = (uint)firstButton.ToolTip;
             _currentButton = firstButton;
         }
 
@@ -193,10 +195,10 @@ namespace DisplayRotation
                 childButton.Foreground = BtnClockwise.Foreground;
             }
 
-            var button = (Button) sender;
-            button.BorderBrush = (SolidColorBrush) FindResource("MahApps.Brushes.Highlight");
+            var button = (Button)sender;
+            button.BorderBrush = (SolidColorBrush)FindResource("MahApps.Brushes.Highlight");
             button.Foreground = Brushes.White;
-            _currentDisplayId = (uint) button.ToolTip;
+            _currentDisplayId = (uint)button.ToolTip;
             _currentButton = button;
         }
 
@@ -265,7 +267,7 @@ namespace DisplayRotation
 
         private void ToggleFlyout(int index, bool stayOpen = false)
         {
-            var activeFlyout = (Flyout) Flyouts.Items[index];
+            var activeFlyout = (Flyout)Flyouts.Items[index];
             if (activeFlyout == null)
             {
                 return;

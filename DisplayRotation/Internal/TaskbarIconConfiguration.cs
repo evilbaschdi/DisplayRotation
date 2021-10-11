@@ -4,8 +4,10 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using EvilBaschdi.CoreExtended;
 using EvilBaschdi.CoreExtended.Controls.About;
 using Hardcodet.Wpf.TaskbarNotification;
+using JetBrains.Annotations;
 using MahApps.Metro.IconPacks;
 
 namespace DisplayRotation.Internal
@@ -14,9 +16,10 @@ namespace DisplayRotation.Internal
     {
         private readonly IActiveDevices _activeDevices;
         private readonly Assembly _assembly = typeof(MainWindow).Assembly;
-        private readonly MainWindow _mainWindow = (MainWindow) Application.Current.MainWindow;
+        private readonly MainWindow _mainWindow = (MainWindow)Application.Current.MainWindow;
         private readonly IRotateButtonAndCanvas _rotateButtonAndCanvas;
         private readonly IRotateDisplay _rotateDisplay;
+        private readonly IRoundCorners _roundCorners;
         private readonly TaskbarIcon _taskbarIcon;
 
 
@@ -26,20 +29,26 @@ namespace DisplayRotation.Internal
         /// <param name="activeDevices"></param>
         /// <param name="rotateDisplay"></param>
         /// <param name="rotateButtonAndCanvas"></param>
+        /// <param name="roundCorners"></param>
         /// <exception cref="ArgumentNullException">
         ///     <paramref name="taskbarIcon" /> is <see langword="null" />.
         ///     <paramref name="activeDevices" /> is <see langword="null" />.
         ///     <paramref name="rotateDisplay" /> is <see langword="null" />.
         ///     <paramref name="rotateButtonAndCanvas" /> is <see langword="null" />.
         /// </exception>
-        public TaskbarIconConfiguration(TaskbarIcon taskbarIcon, IActiveDevices activeDevices, IRotateDisplay rotateDisplay,
-                                        IRotateButtonAndCanvas rotateButtonAndCanvas)
+        public TaskbarIconConfiguration([NotNull] TaskbarIcon taskbarIcon, [NotNull] IActiveDevices activeDevices,
+                                        [NotNull] IRotateDisplay rotateDisplay,
+                                        [NotNull] IRotateButtonAndCanvas rotateButtonAndCanvas, [NotNull] IRoundCorners roundCorners)
         {
+            _roundCorners = roundCorners ?? throw new ArgumentNullException(nameof(roundCorners));
+
+
             //_mainWindow = mainWindow ?? throw new ArgumentNullException(nameof(mainWindow));
             _taskbarIcon = taskbarIcon ?? throw new ArgumentNullException(nameof(taskbarIcon));
             _activeDevices = activeDevices ?? throw new ArgumentNullException(nameof(activeDevices));
             _rotateDisplay = rotateDisplay ?? throw new ArgumentNullException(nameof(rotateDisplay));
-            _rotateButtonAndCanvas = rotateButtonAndCanvas ?? throw new ArgumentNullException(nameof(rotateButtonAndCanvas));
+            _rotateButtonAndCanvas =
+                rotateButtonAndCanvas ?? throw new ArgumentNullException(nameof(rotateButtonAndCanvas));
         }
 
         /// <summary>
@@ -69,17 +78,15 @@ namespace DisplayRotation.Internal
                 var currentButton = new Button();
 
                 foreach (Canvas canvas in _mainWindow.DisplayStackPanel.Children)
+                foreach (Button button in canvas.Children)
                 {
-                    foreach (Button button in canvas.Children)
+                    if (button.Name != $"ButtonDisplay{device.Id}")
                     {
-                        if (button.Name != $"ButtonDisplay{device.Id}")
-                        {
-                            continue;
-                        }
-
-                        currentButton = button;
-                        break;
+                        continue;
                     }
+
+                    currentButton = button;
+                    break;
                 }
 
                 var parent = new MenuItem
@@ -211,10 +218,11 @@ namespace DisplayRotation.Internal
 
         private void ContextMenuItemAboutClick(object sender, RoutedEventArgs e)
         {
-            IAboutContent aboutWindowContent = new AboutContent(_assembly, $@"{AppDomain.CurrentDomain.BaseDirectory}\512.png");
+            IAboutContent aboutWindowContent =
+                new AboutContent(_assembly, $@"{AppDomain.CurrentDomain.BaseDirectory}\512.png");
             var aboutWindow = new AboutWindow
                               {
-                                  DataContext = new AboutViewModel(aboutWindowContent)
+                                  DataContext = new AboutViewModel(aboutWindowContent, _roundCorners)
                               };
             aboutWindow.ShowDialog();
         }

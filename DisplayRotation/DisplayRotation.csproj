@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -8,8 +8,8 @@
     <Authors>Sebastian Walter</Authors>
     <Company>evilbaschdi (Sebastian Walter)</Company>
     <Copyright>Copyright © 2014 - $([System.DateTime]::UtcNow.ToString(yyyy)) evilbaschdi</Copyright>
-    <LangVersion>9</LangVersion>
-    <TargetFramework>net5.0-windows</TargetFramework>
+    <LangVersion>preview</LangVersion>
+    <TargetFramework>net6.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <useWindowsForms>true</useWindowsForms>
   </PropertyGroup>
@@ -22,13 +22,13 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="ControlzEx" Version="5.0.1" />
-    <PackageReference Include="EvilBaschdi.Core" Version="2021.7.12.1538-develop" />
-    <PackageReference Include="EvilBaschdi.CoreExtended" Version="2021.6.7.1723-develop" />
+    <PackageReference Include="EvilBaschdi.Core" Version="2021.9.27.1934-develop" />
+    <PackageReference Include="EvilBaschdi.CoreExtended" Version="2021.9.28.1631-develop" />
     <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="1.1.0" />
     <PackageReference Include="MahApps.Metro" Version="2.4.7" />
-    <PackageReference Include="MahApps.Metro.IconPacks.Material" Version="4.8.0" />
-    <PackageReference Include="MahApps.Metro.IconPacks.MaterialDesign" Version="4.8.0" />
-    <PackageReference Include="System.Drawing.Common" Version="6.0.0-preview.7.21377.19" />
+    <PackageReference Include="MahApps.Metro.IconPacks.Material" Version="4.10.0" />
+    <PackageReference Include="MahApps.Metro.IconPacks.MaterialDesign" Version="4.10.0" />
+    <PackageReference Include="System.Drawing.Common" Version="6.0.0-rc.1.21451.13" />
   </ItemGroup>
   <ItemGroup>
     <AppDesigner Include="Properties\" />
