@@ -13,16 +13,13 @@ public class RotateDisplay : IRotateDisplay
         displayDevice.cb = Marshal.SizeOf(displayDevice);
 
         NativeMethods.EnumDisplayDevices(null, deviceId, ref displayDevice, 0);
-        if (0 != NativeMethods.EnumDisplaySettings(
-                displayDevice.DeviceName, NativeMethods.EnumCurrentSettings, ref devMode))
+        if (NativeMethods.EnumDisplaySettings(displayDevice.DeviceName, NativeMethods.EnumCurrentSettings, ref devMode) != 0)
         {
             (devMode.dmPelsHeight, devMode.dmPelsWidth) = (devMode.dmPelsWidth, devMode.dmPelsHeight);
         }
 
         devMode.dmDisplayOrientation = rotation;
 
-        NativeMethods.ChangeDisplaySettingsEx(
-            displayDevice.DeviceName, ref devMode, IntPtr.Zero,
-            DisplaySettingsFlags.CdsUpdateregistry, IntPtr.Zero);
+        NativeMethods.ChangeDisplaySettingsEx(displayDevice.DeviceName, ref devMode, IntPtr.Zero, DisplaySettingsFlags.CdsUpdateregistry, IntPtr.Zero);
     }
 }
