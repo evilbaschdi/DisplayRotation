@@ -1,8 +1,7 @@
 ﻿using EvilBaschdi.Core;
 
-namespace DisplayRotation.Internal
+namespace DisplayRotation.Internal;
+
+public interface IRotateDisplay : IRunFor2<int, uint>
 {
-    public interface IRotateDisplay : IRunFor2<int, uint>
-    {
-    }
 }

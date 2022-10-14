@@ -1,59 +1,56 @@
-﻿using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Windows.Forms;
+﻿using System.Runtime.InteropServices;
 
-namespace DisplayRotation.Internal
+namespace DisplayRotation.Internal;
+
+public class ActiveDevices : IActiveDevices
 {
-    public class ActiveDevices : IActiveDevices
+    public IEnumerable<DisplayHelper> Value
     {
-        public IEnumerable<DisplayHelper> Value
+        get
         {
-            get
+            var device = new DisplayDevice();
+            device.cb = Marshal.SizeOf(device);
+
+            var list = new List<DisplayHelper>();
+            for (uint id = 0; NativeMethods.EnumDisplayDevices(null, id, ref device, 0); id++)
             {
-                var device = new DisplayDevice();
                 device.cb = Marshal.SizeOf(device);
 
-                var list = new List<DisplayHelper>();
-                for (uint id = 0; NativeMethods.EnumDisplayDevices(null, id, ref device, 0); id++)
+                NativeMethods.EnumDisplayDevices(device.DeviceName, 0, ref device, 0);
+
+                device.cb = Marshal.SizeOf(device);
+
+                device.cb = Marshal.SizeOf(device);
+
+                if (device.DeviceName.Trim().Length <= 0)
                 {
-                    device.cb = Marshal.SizeOf(device);
+                    continue;
+                }
 
-                    NativeMethods.EnumDisplayDevices(device.DeviceName, 0, ref device, 0);
+                var helper = new DisplayHelper
+                             {
+                                 Id = id,
+                                 Name = device.DeviceString
+                             };
 
-                    device.cb = Marshal.SizeOf(device);
-
-                    device.cb = Marshal.SizeOf(device);
-
-                    if (device.DeviceName.Trim().Length <= 0)
+                foreach (var screen in Screen.AllScreens)
+                {
+                    if (!device.DeviceName.Contains(screen.DeviceName))
                     {
                         continue;
                     }
 
-                    var helper = new DisplayHelper
-                                 {
-                                     Id = id,
-                                     Name = device.DeviceString
-                                 };
-
-                    foreach (var screen in Screen.AllScreens)
-                    {
-                        if (!device.DeviceName.Contains(screen.DeviceName))
-                        {
-                            continue;
-                        }
-
-                        var rectangle = screen.Bounds;
-                        helper.PositionX = rectangle.X;
-                        helper.PositionY = rectangle.Y;
-                        helper.Height = rectangle.Height;
-                        helper.Width = rectangle.Width;
-                    }
-
-                    list.Add(helper);
+                    var rectangle = screen.Bounds;
+                    helper.PositionX = rectangle.X;
+                    helper.PositionY = rectangle.Y;
+                    helper.Height = rectangle.Height;
+                    helper.Width = rectangle.Width;
                 }
 
-                return list;
+                list.Add(helper);
             }
+
+            return list;
         }
     }
 }

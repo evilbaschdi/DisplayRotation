@@ -1,32 +1,38 @@
+using System.Windows;
 using System.Windows.Controls;
+using JetBrains.Annotations;
 
-namespace DisplayRotation.Internal
+namespace DisplayRotation.Internal;
+
+public class RotateButtonAndCanvas : IRotateButtonAndCanvas
 {
-    public class RotateButtonAndCanvas : IRotateButtonAndCanvas
+    public void RunFor(int rotation, [NotNull] Button button)
     {
-        public void RunFor(int rotation, Button button)
+        if (button == null)
         {
-            const double x = 10d;
-            const double w = 192d;
-            const double h = 108d;
+            throw new ArgumentNullException(nameof(button));
+        }
 
-            switch (rotation)
-            {
-                case NativeMethods.Dmdo90:
-                case NativeMethods.Dmdo270:
-                    button.Height = w;
-                    button.Width = h;
-                    ((Canvas) button.Parent).Margin = new(x, 0, h, 0);
-                    break;
+        const double x = 10d;
+        const double w = 192d;
+        const double h = 108d;
 
-                case NativeMethods.Dmdo180:
-                case NativeMethods.DmdoDefault:
+        switch (rotation)
+        {
+            case NativeMethods.Dmdo90:
+            case NativeMethods.Dmdo270:
+                button.SetCurrentValue(FrameworkElement.HeightProperty, w);
+                button.SetCurrentValue(FrameworkElement.WidthProperty, h);
+                ((Canvas)button.Parent).SetCurrentValue(FrameworkElement.MarginProperty, new Thickness(x, 0, h, 0));
+                break;
 
-                    button.Height = h;
-                    button.Width = w;
-                    ((Canvas) button.Parent).Margin = new(x, 0, w, 0);
-                    break;
-            }
+            case NativeMethods.Dmdo180:
+            case NativeMethods.DmdoDefault:
+
+                button.SetCurrentValue(FrameworkElement.HeightProperty, h);
+                button.SetCurrentValue(FrameworkElement.WidthProperty, w);
+                ((Canvas)button.Parent).SetCurrentValue(FrameworkElement.MarginProperty, new Thickness(x, 0, w, 0));
+                break;
         }
     }
 }

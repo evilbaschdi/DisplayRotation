@@ -1,17 +1,14 @@
-﻿using System.Windows.Forms;
+﻿namespace DisplayRotation.Internal;
 
-namespace DisplayRotation.Internal
+/// <inheritdoc />
+/// <summary>
+///     Class that provides the count of current connected screens of the current device / session.
+/// </summary>
+public class ScreenCount : IScreenCount
 {
     /// <inheritdoc />
     /// <summary>
-    ///     Class that provides the count of current connected screens of the current device / session.
+    ///     Count of current connected screens.
     /// </summary>
-    public class ScreenCount : IScreenCount
-    {
-        /// <inheritdoc />
-        /// <summary>
-        ///     Count of current connected screens.
-        /// </summary>
-        public int Value => Screen.AllScreens.Length;
-    }
+    public int Value => Screen.AllScreens.Length;
 }

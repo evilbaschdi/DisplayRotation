@@ -1,9 +1,8 @@
 ﻿using EvilBaschdi.Core;
 
-namespace DisplayRotation.Internal
+namespace DisplayRotation.Internal;
+
+public interface ITaskbarIconConfiguration : IRun
 {
-    public interface ITaskbarIconConfiguration : IRun
-    {
-        void StartMinimized();
-    }
+    void StartMinimized();
 }

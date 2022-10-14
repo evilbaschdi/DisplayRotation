@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-using EvilBaschdi.Core;
+﻿using EvilBaschdi.Core;
 
-namespace DisplayRotation.Internal
+namespace DisplayRotation.Internal;
+
+public interface IActiveDevices : IValueOfIEnumerable<DisplayHelper>
 {
-    public interface IActiveDevices : IValue<IEnumerable<DisplayHelper>>
-    {
-    }
 }

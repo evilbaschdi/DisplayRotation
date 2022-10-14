@@ -7,7 +7,7 @@
                       xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
                       xmlns:tb="http://www.hardcodet.net/taskbar"
                       ShowIconOnTitleBar="False" TitleCharacterCasing="Normal"
-                      mc:Ignorable="d" GlowBrush="{DynamicResource MahApps.Brushes.AccentBase}"
+                      mc:Ignorable="d"
                       Title="Change Display Rotation" Width="1000" Height="300" Icon="b.ico">
     <!--  RightWindowCommands  -->
     <controls:MetroWindow.RightWindowCommands>
@@ -75,7 +75,7 @@
     <controls:MetroWindow.Flyouts>
         <controls:FlyoutsControl>
             <!--  Settings Flyout  -->
-            <controls:Flyout Name="SettingsFlyout" Width="250" AnimateOnPositionChange="True" AnimateOpacity="True" Header="settings" Position="Right" Theme="Accent">
+            <controls:Flyout Name="SettingsFlyout" Width="250" AnimateOnPositionChange="True" AnimateOpacity="True" Header="settings" Position="Right" Theme="Adapt">
                 <StackPanel>
                     <StackPanel Margin="10,5,0,0" Orientation="Horizontal">
                         <Label Width="50" Margin="0,5,0,0" HorizontalAlignment="Left"

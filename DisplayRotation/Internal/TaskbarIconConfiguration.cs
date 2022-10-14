@@ -1,6 +1,3 @@
-using System;
-using System.Drawing;
-using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
@@ -10,231 +7,225 @@ using Hardcodet.Wpf.TaskbarNotification;
 using JetBrains.Annotations;
 using MahApps.Metro.IconPacks;
 
-namespace DisplayRotation.Internal
+namespace DisplayRotation.Internal;
+
+public class TaskbarIconConfiguration : ITaskbarIconConfiguration
 {
-    public class TaskbarIconConfiguration : ITaskbarIconConfiguration
+    private readonly IActiveDevices _activeDevices;
+    private readonly IApplicationStyle _applicationStyle;
+    private readonly Assembly _assembly = typeof(MainWindow).Assembly;
+    private readonly MainWindow _mainWindow = (MainWindow)Application.Current.MainWindow;
+    private readonly IRotateButtonAndCanvas _rotateButtonAndCanvas;
+    private readonly IRotateDisplay _rotateDisplay;
+    private readonly TaskbarIcon _taskbarIcon;
+
+    /// <summary>
+    /// </summary>
+    /// <param name="taskbarIcon"></param>
+    /// <param name="applicationStyle"></param>
+    /// <param name="activeDevices"></param>
+    /// <param name="rotateDisplay"></param>
+    /// <param name="rotateButtonAndCanvas"></param>
+    /// <exception cref="ArgumentNullException">
+    ///     <paramref name="taskbarIcon" /> is <see langword="null" />.
+    ///     <paramref name="activeDevices" /> is <see langword="null" />.
+    ///     <paramref name="rotateDisplay" /> is <see langword="null" />.
+    ///     <paramref name="rotateButtonAndCanvas" /> is <see langword="null" />.
+    /// </exception>
+    public TaskbarIconConfiguration([NotNull] TaskbarIcon taskbarIcon,
+                                    [NotNull] IApplicationStyle applicationStyle,
+                                    [NotNull] IActiveDevices activeDevices,
+                                    [NotNull] IRotateDisplay rotateDisplay,
+                                    [NotNull] IRotateButtonAndCanvas rotateButtonAndCanvas)
     {
-        private readonly IActiveDevices _activeDevices;
-        private readonly Assembly _assembly = typeof(MainWindow).Assembly;
-        private readonly MainWindow _mainWindow = (MainWindow)Application.Current.MainWindow;
-        private readonly IRotateButtonAndCanvas _rotateButtonAndCanvas;
-        private readonly IRotateDisplay _rotateDisplay;
-        private readonly IRoundCorners _roundCorners;
-        private readonly TaskbarIcon _taskbarIcon;
+        _taskbarIcon = taskbarIcon ?? throw new ArgumentNullException(nameof(taskbarIcon));
+        _applicationStyle = applicationStyle ?? throw new ArgumentNullException(nameof(applicationStyle));
+        _activeDevices = activeDevices ?? throw new ArgumentNullException(nameof(activeDevices));
+        _rotateDisplay = rotateDisplay ?? throw new ArgumentNullException(nameof(rotateDisplay));
+        _rotateButtonAndCanvas =
+            rotateButtonAndCanvas ?? throw new ArgumentNullException(nameof(rotateButtonAndCanvas));
+    }
 
+    /// <summary>
+    /// </summary>
+    public void Run()
+    {
+        _taskbarIcon.Icon = Icon.ExtractAssociatedIcon(_assembly.Location);
+        _taskbarIcon.SetCurrentValue(FrameworkElement.ContextMenuProperty, TaskbarIconContextMenu());
+        _taskbarIcon.TrayMouseDoubleClick += TaskbarIconDoubleClick;
+    }
 
-        /// <summary>
-        /// </summary>
-        /// <param name="taskbarIcon"></param>
-        /// <param name="activeDevices"></param>
-        /// <param name="rotateDisplay"></param>
-        /// <param name="rotateButtonAndCanvas"></param>
-        /// <param name="roundCorners"></param>
-        /// <exception cref="ArgumentNullException">
-        ///     <paramref name="taskbarIcon" /> is <see langword="null" />.
-        ///     <paramref name="activeDevices" /> is <see langword="null" />.
-        ///     <paramref name="rotateDisplay" /> is <see langword="null" />.
-        ///     <paramref name="rotateButtonAndCanvas" /> is <see langword="null" />.
-        /// </exception>
-        public TaskbarIconConfiguration([NotNull] TaskbarIcon taskbarIcon, [NotNull] IActiveDevices activeDevices,
-                                        [NotNull] IRotateDisplay rotateDisplay,
-                                        [NotNull] IRotateButtonAndCanvas rotateButtonAndCanvas, [NotNull] IRoundCorners roundCorners)
+    /// <summary>
+    /// </summary>
+    public void StartMinimized()
+    {
+        _taskbarIcon.SetCurrentValue(UIElement.VisibilityProperty, Visibility.Visible);
+        _mainWindow.Hide();
+    }
+
+    // ReSharper disable UseObjectOrCollectionInitializer
+    private ContextMenu TaskbarIconContextMenu()
+    {
+        var contextMenu = new ContextMenu();
+
+        foreach (var device in _activeDevices.Value.OrderBy(d => d.PositionX))
         {
-            _roundCorners = roundCorners ?? throw new ArgumentNullException(nameof(roundCorners));
+            var currentButton = new Button();
 
-
-            //_mainWindow = mainWindow ?? throw new ArgumentNullException(nameof(mainWindow));
-            _taskbarIcon = taskbarIcon ?? throw new ArgumentNullException(nameof(taskbarIcon));
-            _activeDevices = activeDevices ?? throw new ArgumentNullException(nameof(activeDevices));
-            _rotateDisplay = rotateDisplay ?? throw new ArgumentNullException(nameof(rotateDisplay));
-            _rotateButtonAndCanvas =
-                rotateButtonAndCanvas ?? throw new ArgumentNullException(nameof(rotateButtonAndCanvas));
-        }
-
-        /// <summary>
-        /// </summary>
-        public void Run()
-        {
-            _taskbarIcon.Icon = Icon.ExtractAssociatedIcon(_assembly.Location);
-            _taskbarIcon.ContextMenu = TaskbarIconContextMenu();
-            _taskbarIcon.TrayMouseDoubleClick += TaskbarIconDoubleClick;
-        }
-
-        /// <summary>
-        /// </summary>
-        public void StartMinimized()
-        {
-            _taskbarIcon.Visibility = Visibility.Visible;
-            _mainWindow.Hide();
-        }
-
-        // ReSharper disable UseObjectOrCollectionInitializer
-        private ContextMenu TaskbarIconContextMenu()
-        {
-            var contextMenu = new ContextMenu();
-
-            foreach (var device in _activeDevices.Value.OrderBy(d => d.PositionX))
+            foreach (Canvas canvas in _mainWindow.DisplayStackPanel.Children)
+            foreach (Button button in canvas.Children)
             {
-                var currentButton = new Button();
-
-                foreach (Canvas canvas in _mainWindow.DisplayStackPanel.Children)
-                foreach (Button button in canvas.Children)
+                if (button.Name != $"ButtonDisplay{device.Id}")
                 {
-                    if (button.Name != $"ButtonDisplay{device.Id}")
-                    {
-                        continue;
-                    }
-
-                    currentButton = button;
-                    break;
+                    continue;
                 }
 
-                var parent = new MenuItem
-                             {
-                                 Header = device.Name
-                             };
-                parent.Icon = new PackIconMaterial
-                              {
-                                  Kind = PackIconMaterialKind.Monitor
-                              };
+                currentButton = button;
+                break;
+            }
 
-                //anticlockwise
-                var anticlockwiseItem = new MenuItem
-                                        {
-                                            Header = "Upright 'anticlockwise'",
-                                            Icon = new PackIconMaterial
-                                                   {
-                                                       Kind = PackIconMaterialKind.ChevronLeft
-                                                   }
-                                        };
-                anticlockwiseItem.Click += (_, _) =>
-                                           {
-                                               _rotateDisplay.RunFor(NativeMethods.Dmdo90, device.Id);
-                                               _rotateButtonAndCanvas.RunFor(NativeMethods.Dmdo90, currentButton);
-                                               _mainWindow.SetWindowMargins();
-                                           };
+            var parent = new MenuItem
+                         {
+                             Header = device.Name
+                         };
+            parent.Icon = new PackIconMaterial
+                          {
+                              Kind = PackIconMaterialKind.Monitor
+                          };
 
-                //180
-                var clockwiseItem = new MenuItem
+            //anticlockwise
+            var anticlockwiseItem = new MenuItem
                                     {
-                                        Header = "Landscape (rotated)",
+                                        Header = "Upright 'anticlockwise'",
                                         Icon = new PackIconMaterial
                                                {
-                                                   Kind = PackIconMaterialKind.ChevronUp
+                                                   Kind = PackIconMaterialKind.ChevronLeft
                                                }
                                     };
-                clockwiseItem.Click += (_, _) =>
+            anticlockwiseItem.Click += (_, _) =>
                                        {
-                                           _rotateDisplay.RunFor(NativeMethods.Dmdo180, device.Id);
-                                           _rotateButtonAndCanvas.RunFor(NativeMethods.Dmdo180, currentButton);
+                                           _rotateDisplay.RunFor(NativeMethods.Dmdo90, device.Id);
+                                           _rotateButtonAndCanvas.RunFor(NativeMethods.Dmdo90, currentButton);
                                            _mainWindow.SetWindowMargins();
                                        };
 
-                //clockwise
-                var mirrorItem = new MenuItem
+            //180
+            var clockwiseItem = new MenuItem
+                                {
+                                    Header = "Landscape (rotated)",
+                                    Icon = new PackIconMaterial
+                                           {
+                                               Kind = PackIconMaterialKind.ChevronUp
+                                           }
+                                };
+            clockwiseItem.Click += (_, _) =>
+                                   {
+                                       _rotateDisplay.RunFor(NativeMethods.Dmdo180, device.Id);
+                                       _rotateButtonAndCanvas.RunFor(NativeMethods.Dmdo180, currentButton);
+                                       _mainWindow.SetWindowMargins();
+                                   };
+
+            //clockwise
+            var mirrorItem = new MenuItem
+                             {
+                                 Header = "Upright 'clockwise'",
+                                 Icon = new PackIconMaterial
+                                        {
+                                            Kind = PackIconMaterialKind.ChevronRight
+                                        }
+                             };
+            mirrorItem.Click += (_, _) =>
+                                {
+                                    _rotateDisplay.RunFor(NativeMethods.Dmdo270, device.Id);
+                                    _rotateButtonAndCanvas.RunFor(NativeMethods.Dmdo270, currentButton);
+                                    _mainWindow.SetWindowMargins();
+                                };
+
+            //restore
+            var restoreItem = new MenuItem
+                              {
+                                  Header = "Reset",
+                                  Icon = new PackIconMaterial
+                                         {
+                                             Kind = PackIconMaterialKind.ChevronDown
+                                         }
+                              };
+            restoreItem.Click += (_, _) =>
                                  {
-                                     Header = "Upright 'clockwise'",
+                                     _rotateDisplay.RunFor(NativeMethods.DmdoDefault, device.Id);
+                                     _rotateButtonAndCanvas.RunFor(NativeMethods.DmdoDefault, currentButton);
+                                     _mainWindow.SetWindowMargins();
+                                 };
+
+            parent.Items.Add(anticlockwiseItem);
+            parent.Items.Add(clockwiseItem);
+            parent.Items.Add(mirrorItem);
+            parent.Items.Add(restoreItem);
+            contextMenu.Items.Add(parent);
+        }
+
+        var aboutApplication = new MenuItem
+                               {
+                                   Header = "About...",
+                                   Icon = new PackIconMaterial
+                                          {
+                                              Kind = PackIconMaterialKind.Information
+                                          }
+                               };
+        aboutApplication.Click += ContextMenuItemAboutClick;
+
+        var restoreApplication = new MenuItem
+                                 {
+                                     Header = "Restore application",
                                      Icon = new PackIconMaterial
                                             {
-                                                Kind = PackIconMaterialKind.ChevronRight
+                                                Kind = PackIconMaterialKind.WindowRestore
                                             }
                                  };
-                mirrorItem.Click += (_, _) =>
-                                    {
-                                        _rotateDisplay.RunFor(NativeMethods.Dmdo270, device.Id);
-                                        _rotateButtonAndCanvas.RunFor(NativeMethods.Dmdo270, currentButton);
-                                        _mainWindow.SetWindowMargins();
-                                    };
+        restoreApplication.Click += ContextMenuItemRestoreClick;
 
-                //restore
-                var restoreItem = new MenuItem
-                                  {
-                                      Header = "Reset",
-                                      Icon = new PackIconMaterial
-                                             {
-                                                 Kind = PackIconMaterialKind.ChevronDown
-                                             }
-                                  };
-                restoreItem.Click += (_, _) =>
-                                     {
-                                         _rotateDisplay.RunFor(NativeMethods.DmdoDefault, device.Id);
-                                         _rotateButtonAndCanvas.RunFor(NativeMethods.DmdoDefault, currentButton);
-                                         _mainWindow.SetWindowMargins();
-                                     };
+        var closeApplication = new MenuItem
+                               {
+                                   Header = "Close application",
+                                   Icon = new PackIconMaterial
+                                          {
+                                              Kind = PackIconMaterialKind.Power
+                                          }
+                               };
+        closeApplication.Click += ContextMenuItemCloseClick;
 
+        contextMenu.Items.Add(new Separator());
+        contextMenu.Items.Add(aboutApplication);
+        contextMenu.Items.Add(restoreApplication);
+        contextMenu.Items.Add(closeApplication);
 
-                parent.Items.Add(anticlockwiseItem);
-                parent.Items.Add(clockwiseItem);
-                parent.Items.Add(mirrorItem);
-                parent.Items.Add(restoreItem);
-                contextMenu.Items.Add(parent);
-            }
+        return contextMenu;
+    }
 
-            var aboutApplication = new MenuItem
-                                   {
-                                       Header = "About...",
-                                       Icon = new PackIconMaterial
-                                              {
-                                                  Kind = PackIconMaterialKind.Information
-                                              }
-                                   };
-            aboutApplication.Click += ContextMenuItemAboutClick;
+    // ReSharper restore UseObjectOrCollectionInitializer
 
-            var restoreApplication = new MenuItem
-                                     {
-                                         Header = "Restore application",
-                                         Icon = new PackIconMaterial
-                                                {
-                                                    Kind = PackIconMaterialKind.WindowRestore
-                                                }
-                                     };
-            restoreApplication.Click += ContextMenuItemRestoreClick;
+    private void ContextMenuItemCloseClick(object sender, RoutedEventArgs e)
+    {
+        _taskbarIcon.Dispose();
+        _mainWindow.Close();
+    }
 
-            var closeApplication = new MenuItem
-                                   {
-                                       Header = "Close application",
-                                       Icon = new PackIconMaterial
-                                              {
-                                                  Kind = PackIconMaterialKind.Power
-                                              }
-                                   };
-            closeApplication.Click += ContextMenuItemCloseClick;
+    private void ContextMenuItemAboutClick(object sender, RoutedEventArgs e)
+    {
+        ICurrentAssembly currentAssembly = new CurrentAssembly();
+        IAboutContent aboutContent = new AboutContent(currentAssembly);
+        IAboutModel aboutModel = new AboutViewModel(aboutContent, _applicationStyle);
+        var aboutWindow = new AboutWindow(aboutModel);
+        aboutWindow.ShowDialog();
+    }
 
-            contextMenu.Items.Add(new Separator());
-            contextMenu.Items.Add(aboutApplication);
-            contextMenu.Items.Add(restoreApplication);
-            contextMenu.Items.Add(closeApplication);
+    private void ContextMenuItemRestoreClick(object sender, RoutedEventArgs e)
+    {
+        _mainWindow.CheckScreenCountAndRestore();
+    }
 
-            return contextMenu;
-        }
-
-        // ReSharper restore UseObjectOrCollectionInitializer
-
-        private void ContextMenuItemCloseClick(object sender, RoutedEventArgs e)
-        {
-            _taskbarIcon.Dispose();
-            _mainWindow.Close();
-        }
-
-        private void ContextMenuItemAboutClick(object sender, RoutedEventArgs e)
-        {
-            IAboutContent aboutWindowContent =
-                new AboutContent(_assembly, $@"{AppDomain.CurrentDomain.BaseDirectory}\512.png");
-            var aboutWindow = new AboutWindow
-                              {
-                                  DataContext = new AboutViewModel(aboutWindowContent, _roundCorners)
-                              };
-            aboutWindow.ShowDialog();
-        }
-
-        private void ContextMenuItemRestoreClick(object sender, RoutedEventArgs e)
-        {
-            _mainWindow.CheckScreenCountAndRestore();
-        }
-
-        private void TaskbarIconDoubleClick(object sender, RoutedEventArgs e)
-        {
-            _mainWindow.CheckScreenCountAndRestore();
-        }
+    private void TaskbarIconDoubleClick(object sender, RoutedEventArgs e)
+    {
+        _mainWindow.CheckScreenCountAndRestore();
     }
 }
