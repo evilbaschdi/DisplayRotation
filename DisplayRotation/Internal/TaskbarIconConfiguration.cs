@@ -1,8 +1,11 @@
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using EvilBaschdi.About.Core;
+using EvilBaschdi.About.Core.Models;
+using EvilBaschdi.About.Wpf;
+using EvilBaschdi.Core;
 using EvilBaschdi.CoreExtended;
-using EvilBaschdi.CoreExtended.Controls.About;
 using Hardcodet.Wpf.TaskbarNotification;
 using JetBrains.Annotations;
 using MahApps.Metro.IconPacks;
@@ -12,7 +15,6 @@ namespace DisplayRotation.Internal;
 public class TaskbarIconConfiguration : ITaskbarIconConfiguration
 {
     private readonly IActiveDevices _activeDevices;
-    private readonly IApplicationStyle _applicationStyle;
     private readonly Assembly _assembly = typeof(MainWindow).Assembly;
     private readonly MainWindow _mainWindow = (MainWindow)Application.Current.MainWindow;
     private readonly IRotateButtonAndCanvas _rotateButtonAndCanvas;
@@ -22,7 +24,6 @@ public class TaskbarIconConfiguration : ITaskbarIconConfiguration
     /// <summary>
     /// </summary>
     /// <param name="taskbarIcon"></param>
-    /// <param name="applicationStyle"></param>
     /// <param name="activeDevices"></param>
     /// <param name="rotateDisplay"></param>
     /// <param name="rotateButtonAndCanvas"></param>
@@ -33,13 +34,12 @@ public class TaskbarIconConfiguration : ITaskbarIconConfiguration
     ///     <paramref name="rotateButtonAndCanvas" /> is <see langword="null" />.
     /// </exception>
     public TaskbarIconConfiguration([NotNull] TaskbarIcon taskbarIcon,
-                                    [NotNull] IApplicationStyle applicationStyle,
                                     [NotNull] IActiveDevices activeDevices,
                                     [NotNull] IRotateDisplay rotateDisplay,
                                     [NotNull] IRotateButtonAndCanvas rotateButtonAndCanvas)
     {
         _taskbarIcon = taskbarIcon ?? throw new ArgumentNullException(nameof(taskbarIcon));
-        _applicationStyle = applicationStyle ?? throw new ArgumentNullException(nameof(applicationStyle));
+
         _activeDevices = activeDevices ?? throw new ArgumentNullException(nameof(activeDevices));
         _rotateDisplay = rotateDisplay ?? throw new ArgumentNullException(nameof(rotateDisplay));
         _rotateButtonAndCanvas =
@@ -214,7 +214,7 @@ public class TaskbarIconConfiguration : ITaskbarIconConfiguration
     {
         ICurrentAssembly currentAssembly = new CurrentAssembly();
         IAboutContent aboutContent = new AboutContent(currentAssembly);
-        IAboutModel aboutModel = new AboutViewModel(aboutContent, _applicationStyle);
+        IAboutModel aboutModel = new AboutViewModel(aboutContent);
         var aboutWindow = new AboutWindow(aboutModel);
         aboutWindow.ShowDialog();
     }

@@ -3,9 +3,12 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using DisplayRotation.Internal;
+using EvilBaschdi.About.Core;
+using EvilBaschdi.About.Core.Models;
+using EvilBaschdi.About.Wpf;
+using EvilBaschdi.Core;
 using EvilBaschdi.CoreExtended;
 using EvilBaschdi.CoreExtended.AppHelpers;
-using EvilBaschdi.CoreExtended.Controls.About;
 using EvilBaschdi.CoreExtended.FlyOut;
 using MahApps.Metro.Controls;
 
@@ -21,7 +24,6 @@ public partial class MainWindow : MetroWindow
     private readonly int _overrideProtection;
     private readonly IRotateButtonAndCanvas _rotateButtonAndCanvas;
     private readonly IRotateDisplay _rotateDisplay;
-    private readonly IApplicationStyle _style;
     private readonly IToggleFlyOut _toggleFlyOut;
 
     private IAutoStart _autoStart;
@@ -33,8 +35,8 @@ public partial class MainWindow : MetroWindow
     {
         InitializeComponent();
 
-        _style = new ApplicationStyle(true);
-        _style.Run();
+        IApplicationStyle applicationStyle = new ApplicationStyle(true);
+        applicationStyle.Run();
 
         _rotateDisplay = new RotateDisplay();
         _rotateButtonAndCanvas = new RotateButtonAndCanvas();
@@ -65,7 +67,7 @@ public partial class MainWindow : MetroWindow
         IActiveDevices activeDevices = new ActiveDevices();
         BuildDeviceButtons(activeDevices);
         ITaskbarIconConfiguration taskbarIconConfiguration =
-            new TaskbarIconConfiguration(DisplayRotationTaskbarIcon, _style, activeDevices, _rotateDisplay, _rotateButtonAndCanvas);
+            new TaskbarIconConfiguration(DisplayRotationTaskbarIcon, activeDevices, _rotateDisplay, _rotateButtonAndCanvas);
         taskbarIconConfiguration.StartMinimized();
         taskbarIconConfiguration.Run();
         IScreenCount screenCount = new ScreenCount();
@@ -83,7 +85,7 @@ public partial class MainWindow : MetroWindow
     {
         ICurrentAssembly currentAssembly = new CurrentAssembly();
         IAboutContent aboutContent = new AboutContent(currentAssembly);
-        IAboutModel aboutModel = new AboutViewModel(aboutContent, _style);
+        IAboutModel aboutModel = new AboutViewModel(aboutContent);
         var aboutWindow = new AboutWindow(aboutModel);
 
         aboutWindow.ShowDialog();
