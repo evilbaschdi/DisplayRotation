@@ -5,7 +5,7 @@ using EvilBaschdi.About.Core;
 using EvilBaschdi.About.Core.Models;
 using EvilBaschdi.About.Wpf;
 using EvilBaschdi.Core;
-using EvilBaschdi.CoreExtended;
+using EvilBaschdi.Core.Wpf;
 using Hardcodet.Wpf.TaskbarNotification;
 using JetBrains.Annotations;
 using MahApps.Metro.IconPacks;
@@ -214,8 +214,9 @@ public class TaskbarIconConfiguration : ITaskbarIconConfiguration
     {
         ICurrentAssembly currentAssembly = new CurrentAssembly();
         IAboutContent aboutContent = new AboutContent(currentAssembly);
-        IAboutModel aboutModel = new AboutViewModel(aboutContent);
-        var aboutWindow = new AboutWindow(aboutModel);
+        IAboutViewModel aboutModel = new AboutViewModel(aboutContent);
+        IApplyMicaBrush applyMicaBrush = new ApplyMicaBrush();
+        var aboutWindow = new AboutWindow(aboutModel, applyMicaBrush);
         aboutWindow.ShowDialog();
     }
 
