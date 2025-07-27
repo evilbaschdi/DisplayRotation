@@ -8,10 +8,7 @@ public class RotateButtonAndCanvas : IRotateButtonAndCanvas
 {
     public void RunFor(int rotation, [NotNull] Button button)
     {
-        if (button == null)
-        {
-            throw new ArgumentNullException(nameof(button));
-        }
+        ArgumentNullException.ThrowIfNull(button);
 
         const double x = 10d;
         const double w = 192d;

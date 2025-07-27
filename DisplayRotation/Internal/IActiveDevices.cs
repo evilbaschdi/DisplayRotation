@@ -2,6 +2,4 @@
 
 namespace DisplayRotation.Internal;
 
-public interface IActiveDevices : IIEnumerableOf<DisplayHelper>
-{
-}
+public interface IActiveDevices : IIEnumerableOf<DisplayHelper>;

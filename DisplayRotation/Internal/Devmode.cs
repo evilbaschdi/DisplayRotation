@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace DisplayRotation.Internal;
 
-[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
 // ReSharper disable once IdentifierTypo
 public struct Devmode
 {

@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace DisplayRotation.Internal;
 
-[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
 public struct DisplayDevice
 {
     [MarshalAs(UnmanagedType.U4)] public int cb;
