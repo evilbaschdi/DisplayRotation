@@ -39,7 +39,7 @@
                             </StackPanel>
                         </Button>
                         <!-- Anticlockwise -->
-                        <Button x:Name="BtnAntiClock" Margin="10,10,0,0" Height="30" Width="150" Click="BtnAntiClockOnClick">
+                        <Button x:Name="BtnAntiClockwise" Margin="10,10,0,0" Height="30" Width="150" Click="BtnAnticlockwiseOnClick">
                             <StackPanel Orientation="Horizontal">
                                 <!--<iconPacks:PackIconMaterial Kind="ChevronLeft" Width="16" Height="16" HorizontalAlignment="Center" VerticalAlignment="Center" />-->
                                 <TextBlock Margin="5 0 0 0" VerticalAlignment="Center" Text="👈 Anticlockwise 👈" />

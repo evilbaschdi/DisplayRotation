@@ -1,7 +1,7 @@
-﻿using Avalonia.Controls;
+﻿using System.ComponentModel;
+using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media;
-using Avalonia.Platform.Storage;
 using DisplayRotation.Avalonia.Internal;
 using DisplayRotation.Avalonia.ViewModels;
 using DisplayRotation.Core;
@@ -21,7 +21,6 @@ public partial class MainWindow : Window
     private readonly IRotateDisplay _rotateDisplay;
     private Button _currentButton;
     private uint _currentDisplayId;
-    private int _screenCount;
     private IBrush _defaultBorderBrush;
 
     /// <summary>
@@ -42,6 +41,15 @@ public partial class MainWindow : Window
 
         ApplyLayout();
         Load();
+        Closing += MainWindowClosing;
+    }
+
+    private void MainWindowClosing(object sender, CancelEventArgs e)
+    {
+        e.Cancel = true;
+
+        ShowInTaskbar = false;
+        Hide();
     }
 
     private void ApplyLayout()
@@ -54,8 +62,6 @@ public partial class MainWindow : Window
     {
         IActiveDevices activeDevices = new ActiveDevices();
         BuildDeviceButtons(activeDevices);
-        IScreenCount screenCount = new ScreenCount();
-        _screenCount = screenCount.Value;
     }
 
     private void BuildDeviceButtons(IActiveDevices activeDevices)
@@ -71,14 +77,12 @@ public partial class MainWindow : Window
             // ReSharper disable once UseObjectOrCollectionInitializer
             var displayButton = new Button
                                 {
-                                    //Name = $"ButtonDisplay{device.Id}",
                                     Name = $"{device.Id}",
                                     Height = buttonHeight,
                                     Width = buttonWidth,
                                     Content = new TextBlock
                                               {
-                                                  //Text = $"{displayHelper.Name}{Environment.NewLine}{displayHelper.Width} x {displayHelper.Height}",
-                                                  Text = $"{device.Name}",
+                                                  Text = $"{device.Name} ({device.Id})",
                                                   TextAlignment = TextAlignment.Center,
                                                   TextWrapping = TextWrapping.Wrap
                                               },
@@ -99,6 +103,7 @@ public partial class MainWindow : Window
             DisplayStackPanel.Children.Add(displayCanvas);
         }
 
+        //Tray.SetMenuItems(DisplayStackPanel.Children.Cast<Canvas>().SelectMany(childCanvas => childCanvas.Children.Cast<Button>()).ToList());
         SetWindowMargins();
         ActivateFirstDisplay();
     }
@@ -112,7 +117,6 @@ public partial class MainWindow : Window
 
         var firstButton = DisplayStackPanel.Children.Cast<Canvas>().SelectMany(childCanvas => childCanvas.Children.Cast<Button>()).First();
         firstButton.BorderBrush = Brushes.Blue;
-        firstButton.Foreground = Brushes.White;
         _currentDisplayId = Convert.ToUInt32(firstButton.Name);
         _currentButton = firstButton;
     }
@@ -152,7 +156,7 @@ public partial class MainWindow : Window
         SetWindowMargins();
     }
 
-    private void BtnAntiClockOnClick(object sender, RoutedEventArgs e)
+    private void BtnAnticlockwiseOnClick(object sender, RoutedEventArgs e)
     {
         _rotateDisplay.RunFor(NativeMethods.Dmdo90, _currentDisplayId);
         _rotateButton.RunFor(NativeMethods.Dmdo90, _currentButton);
@@ -165,9 +169,4 @@ public partial class MainWindow : Window
         _rotateButton.RunFor(NativeMethods.DmdoDefault, _currentButton);
         SetWindowMargins();
     }
-
-    private static string FullPathOrName(IStorageItem item) => item is null ? "(null)" : item.Path.LocalPath;
-
-    //return item.TryGetUri(out var uri) ? uri.LocalPath : item.Name;
-    private TopLevel GetTopLevel() => VisualRoot as TopLevel ?? throw new NullReferenceException("Invalid Owner");
 }
