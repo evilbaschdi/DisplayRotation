@@ -4,6 +4,16 @@ VisualStudioVersion = 17.14.36310.24
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DisplayRotation", "DisplayRotation\DisplayRotation.csproj", "{7A789136-B210-452D-A16B-20B5D8CCFE76}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DisplayRotation.Avalonia", "DisplayRotation.Avalonia\DisplayRotation.Avalonia.csproj", "{6E71CDD8-7691-1C68-7AEB-1F749FA3A176}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DisplayRotation.Core", "DisplayRotation.Core\DisplayRotation.Core.csproj", "{610F71D1-B850-43B3-AEF4-4712DC80AAF1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{089100B1-113F-4E66-888A-E83F3999EAFD}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+		Directory.Packages.props = Directory.Packages.props
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -14,8 +24,19 @@ Global
 		{7A789136-B210-452D-A16B-20B5D8CCFE76}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A789136-B210-452D-A16B-20B5D8CCFE76}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7A789136-B210-452D-A16B-20B5D8CCFE76}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E71CDD8-7691-1C68-7AEB-1F749FA3A176}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E71CDD8-7691-1C68-7AEB-1F749FA3A176}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E71CDD8-7691-1C68-7AEB-1F749FA3A176}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E71CDD8-7691-1C68-7AEB-1F749FA3A176}.Release|Any CPU.Build.0 = Release|Any CPU
+		{610F71D1-B850-43B3-AEF4-4712DC80AAF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{610F71D1-B850-43B3-AEF4-4712DC80AAF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{610F71D1-B850-43B3-AEF4-4712DC80AAF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{610F71D1-B850-43B3-AEF4-4712DC80AAF1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {427F2D42-20A5-4D2F-8B97-5FE85D20F184}
 	EndGlobalSection
 EndGlobal

@@ -1,4 +1,4 @@
-namespace DisplayRotation.Internal;
+namespace DisplayRotation.Core;
 
 [Flags]
 internal enum DisplaySettingsFlags

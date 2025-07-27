@@ -1,11 +1,14 @@
 using System.Windows;
 using System.Windows.Controls;
+using DisplayRotation.Core;
 using JetBrains.Annotations;
 
 namespace DisplayRotation.Internal;
 
+/// <inheritdoc />
 public class RotateButtonAndCanvas : IRotateButtonAndCanvas
 {
+    /// <summary />
     public void RunFor(int rotation, [NotNull] Button button)
     {
         ArgumentNullException.ThrowIfNull(button);

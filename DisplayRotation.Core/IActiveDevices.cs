@@ -1,5 +1,4 @@
-﻿using EvilBaschdi.Core;
+﻿namespace DisplayRotation.Core;
 
-namespace DisplayRotation.Internal;
-
+/// <inheritdoc />
 public interface IActiveDevices : IIEnumerableOf<DisplayHelper>;

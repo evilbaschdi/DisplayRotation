@@ -9,9 +9,7 @@
 		<Company>evilbaschdi (Sebastian Walter)</Company>
 		<Copyright>Copyright © 2014 - $([System.DateTime]::UtcNow.ToString(yyyy)) evilbaschdi</Copyright>
 		<LangVersion>preview</LangVersion>
-		<TargetFramework>net9.0-windows</TargetFramework>
 		<UseWPF>true</UseWPF>
-		<useWindowsForms>true</useWindowsForms>
 		<EnableNETAnalyzers>true</EnableNETAnalyzers>
 		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
@@ -25,7 +23,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="EvilBaschdi.Core" />
 		<PackageReference Include="EvilBaschdi.Core.Wpf" />
 		<PackageReference Include="EvilBaschdi.About.Wpf" />
 		<PackageReference Include="Hardcodet.NotifyIcon.Wpf" />
@@ -53,6 +50,9 @@
 		<Content Include="70.png">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\DisplayRotation.Core\DisplayRotation.Core.csproj" />
 	</ItemGroup>
 
 </Project>

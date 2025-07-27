@@ -1,16 +1,23 @@
 <Project>
-  <PropertyGroup>
-    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-    <CentralPackageTransitivePinningEnabled>false</CentralPackageTransitivePinningEnabled>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageVersion Include="EvilBaschdi.About.Wpf" Version="2025.7.19.7" />
-    <PackageVersion Include="EvilBaschdi.Core" Version="2025.7.22.17" />
-    <PackageVersion Include="EvilBaschdi.Core.Wpf" Version="2025.7.24.18" />
-    <PackageVersion Include="Hardcodet.NotifyIcon.Wpf" Version="2.0.1" />
-    <PackageVersion Include="MahApps.Metro.IconPacks.Material" Version="6.0.0" />
-    <PackageVersion Include="MahApps.Metro.IconPacks.MaterialDesign" Version="6.0.0" />
-    <PackageVersion Include="System.Drawing.Common" Version="9.0.7" />
-    <PackageVersion Include="WpfAnalyzers" Version="4.1.1" />
-  </ItemGroup>
+	<PropertyGroup>
+		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+		<CentralPackageTransitivePinningEnabled>false</CentralPackageTransitivePinningEnabled>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageVersion Include="EvilBaschdi.About.Wpf" Version="2025.7.19.7" />
+		<PackageVersion Include="EvilBaschdi.Core" Version="2025.7.22.17" />
+		<PackageVersion Include="EvilBaschdi.Core.Wpf" Version="2025.7.24.18" />
+		<PackageVersion Include="Hardcodet.NotifyIcon.Wpf" Version="2.0.1" />
+		<PackageVersion Include="MahApps.Metro.IconPacks.Material" Version="6.0.0" />
+		<PackageVersion Include="MahApps.Metro.IconPacks.MaterialDesign" Version="6.0.0" />
+		<PackageVersion Include="System.Drawing.Common" Version="9.0.7" />
+		<PackageVersion Include="WpfAnalyzers" Version="4.1.1" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageVersion Include="Avalonia.Diagnostics" Version="11.3.2" />
+		<PackageVersion Include="EvilBaschdi.About.Avalonia" Version="2025.7.19.7" />
+		<PackageVersion Include="EvilBaschdi.Core.Avalonia" Version="2025.7.19.6" />
+		<PackageVersion Include="EvilBaschdi.Core.DependencyInjection" Version="2025.7.9.16" />
+		<PackageVersion Include="EvilBaschdi.Core.Settings" Version="2025.7.9.16" />
+	</ItemGroup>
 </Project>

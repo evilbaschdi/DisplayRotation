@@ -1,6 +1,4 @@
-﻿using EvilBaschdi.Core;
-
-namespace DisplayRotation.Internal;
+﻿namespace DisplayRotation.Core;
 
 /// <inheritdoc />
 /// <summary>

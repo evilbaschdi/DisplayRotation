@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>disable</Nullable>
+		<UseWindowsForms>true</UseWindowsForms>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="EvilBaschdi.Core" />
+	</ItemGroup>
+
+</Project>

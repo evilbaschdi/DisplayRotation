@@ -1,9 +1,11 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace DisplayRotation.Internal;
+namespace DisplayRotation.Core;
 
+/// <inheritdoc />
 public class ActiveDevices : IActiveDevices
 {
+    /// <inheritdoc />
     public IEnumerable<DisplayHelper> Value
     {
         get

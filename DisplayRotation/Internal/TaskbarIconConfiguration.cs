@@ -1,10 +1,11 @@
+using System.Drawing;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using DisplayRotation.Core;
 using EvilBaschdi.About.Core;
 using EvilBaschdi.About.Core.Models;
 using EvilBaschdi.About.Wpf;
-using EvilBaschdi.Core;
 using EvilBaschdi.Core.Wpf;
 using Hardcodet.Wpf.TaskbarNotification;
 using JetBrains.Annotations;
@@ -12,6 +13,7 @@ using MahApps.Metro.IconPacks;
 
 namespace DisplayRotation.Internal;
 
+/// <inheritdoc />
 public class TaskbarIconConfiguration : ITaskbarIconConfiguration
 {
     private readonly IActiveDevices _activeDevices;
@@ -50,7 +52,8 @@ public class TaskbarIconConfiguration : ITaskbarIconConfiguration
     /// </summary>
     public void Run()
     {
-        _taskbarIcon.Icon = Icon.ExtractAssociatedIcon(_assembly.Location);
+        _taskbarIcon.Icon = Icon.ExtractAssociatedIcon(_assembly?.Location);
+
         _taskbarIcon.SetCurrentValue(FrameworkElement.ContextMenuProperty, TaskbarIconContextMenu());
         _taskbarIcon.TrayMouseDoubleClick += TaskbarIconDoubleClick;
     }

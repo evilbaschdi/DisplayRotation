@@ -1,9 +1,11 @@
 using System.Runtime.InteropServices;
 
-namespace DisplayRotation.Internal;
+namespace DisplayRotation.Core;
 
+/// <inheritdoc />
 public class RotateDisplay : IRotateDisplay
 {
+    /// <inheritdoc />
     public void RunFor(int rotation, uint deviceId)
     {
         //uint deviceId = 1; // zero origin (i.e. 1 means DISPLAY2)

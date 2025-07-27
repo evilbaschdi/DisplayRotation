@@ -2,11 +2,11 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using DisplayRotation.Core;
 using DisplayRotation.Internal;
 using EvilBaschdi.About.Core;
 using EvilBaschdi.About.Core.Models;
 using EvilBaschdi.About.Wpf;
-using EvilBaschdi.Core;
 using EvilBaschdi.Core.Wpf;
 using EvilBaschdi.Core.Wpf.AppHelpers;
 using EvilBaschdi.Core.Wpf.FlyOut;
@@ -31,6 +31,7 @@ public partial class MainWindow : MetroWindow
     private uint _currentDisplayId;
     private int _screenCount;
 
+    /// <inheritdoc />
     public MainWindow()
     {
         InitializeComponent();
@@ -51,6 +52,7 @@ public partial class MainWindow : MetroWindow
         ConfigureAutoRun();
     }
 
+    /// <inheritdoc />
     protected override void OnClosed(EventArgs e)
     {
         foreach (Window currentWindow in Application.Current.Windows)
@@ -105,6 +107,7 @@ public partial class MainWindow : MetroWindow
         DisplayRotationTaskbarIcon.Dispose();
     }
 
+    /// <inheritdoc />
     protected override void OnStateChanged(EventArgs e)
     {
         if (WindowState == WindowState.Minimized)
@@ -172,6 +175,7 @@ public partial class MainWindow : MetroWindow
         _currentButton = firstButton;
     }
 
+    /// <summary />
     public void SetWindowMargins()
     {
         var children = DisplayStackPanel.Children;
@@ -244,6 +248,8 @@ public partial class MainWindow : MetroWindow
         }
     }
 
+    /// <summary>
+    /// </summary>
     public void CheckScreenCountAndRestore()
     {
         IScreenCount screenCount = new ScreenCount();
