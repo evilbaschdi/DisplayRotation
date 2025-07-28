@@ -45,7 +45,7 @@ public class App : Application
             // Find the index after which device-specific menus should be added.
             // Assuming "Settings" is first, then a separator, then "Restore" and "Exit".
             // We want to insert before "Restore".
-            var restoreMenuItem = trayIcon.Menu.Items.FirstOrDefault(item => (item as NativeMenuItem)?.Header == "Restore");
+            var restoreMenuItem = trayIcon.Menu.Items.FirstOrDefault(item => (item as NativeMenuItem)?.Header == "Separator");
             var insertIndex = -1;
             if (restoreMenuItem != null)
             {
@@ -79,14 +79,14 @@ public class App : Application
                 rotateMenuItemReset.CommandParameter = new KeyValuePair<uint, int>(device.Id, NativeMethods.DmdoDefault);
 
                 var rotateMenu = new NativeMenu
-                                 {
-                                     Items =
+                {
+                    Items =
                                      {
                                          rotateMenuItemClockwise,
                                          rotateMenuItemAntiClockwise,
                                          rotateMenuItemReset,
                                      }
-                                 };
+                };
 
                 var deviceMenuItem = new NativeMenuItem($"{device.Name} ({device.Id})") { Menu = rotateMenu };
 
@@ -137,11 +137,11 @@ public class App : Application
             desktop.ShutdownMode = ShutdownMode.OnExplicitShutdown;
 
             _mainWindow = new MainWindow
-                          {
-                              DataContext = ServiceProvider.GetRequiredService<MainWindowViewModel>(),
-                              //desktop.MainWindow = _mainWindow;
-                              ShowInTaskbar = false
-                          };
+            {
+                DataContext = ServiceProvider.GetRequiredService<MainWindowViewModel>(),
+                //desktop.MainWindow = _mainWindow;
+                ShowInTaskbar = false
+            };
 
             _mainWindow.Hide();
         }
