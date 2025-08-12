@@ -79,14 +79,14 @@ public class App : Application
                 rotateMenuItemReset.CommandParameter = new KeyValuePair<uint, int>(device.Id, NativeMethods.DmdoDefault);
 
                 var rotateMenu = new NativeMenu
-                {
-                    Items =
+                                 {
+                                     Items =
                                      {
                                          rotateMenuItemClockwise,
                                          rotateMenuItemAntiClockwise,
                                          rotateMenuItemReset,
                                      }
-                };
+                                 };
 
                 var deviceMenuItem = new NativeMenuItem($"{device.Name} ({device.Id})") { Menu = rotateMenu };
 
@@ -137,11 +137,11 @@ public class App : Application
             desktop.ShutdownMode = ShutdownMode.OnExplicitShutdown;
 
             _mainWindow = new MainWindow
-            {
-                DataContext = ServiceProvider.GetRequiredService<MainWindowViewModel>(),
-                //desktop.MainWindow = _mainWindow;
-                ShowInTaskbar = false
-            };
+                          {
+                              DataContext = ServiceProvider.GetRequiredService<MainWindowViewModel>(),
+                              //desktop.MainWindow = _mainWindow;
+                              ShowInTaskbar = false
+                          };
 
             _mainWindow.Hide();
         }

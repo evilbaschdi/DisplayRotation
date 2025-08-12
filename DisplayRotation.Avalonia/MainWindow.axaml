@@ -6,9 +6,8 @@
         x:Class="DisplayRotation.Avalonia.MainWindow"
         Title="DisplayRotation"
         Icon="/Assets/plainicon.ico"
-        TransparencyLevelHint="Mica"
-        CanResize="False"
-        Background="Transparent">
+
+        CanResize="False">
 
     <Panel Name="RootPanel">
         <ExperimentalAcrylicBorder IsHitTestVisible="False" Name="AcrylicBorder">
