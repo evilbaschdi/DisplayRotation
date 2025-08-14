@@ -1,0 +1,2 @@
+# Ignore SA1407 rule
+dotnet_diagnostic.SA1407.severity = none
