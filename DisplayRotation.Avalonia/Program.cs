@@ -1,6 +1,6 @@
 using Avalonia;
-using Avalonia.ReactiveUI;
 using EvilBaschdi.Core.Avalonia;
+using ReactiveUI.Avalonia;
 
 namespace DisplayRotation.Avalonia;
 
