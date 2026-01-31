@@ -17,7 +17,7 @@
 		<RepositoryUrl>https://github.com/evilbaschdi/DisplayRotation</RepositoryUrl>
 		<SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
 		<Version>$([System.DateTime]::UtcNow.ToString(yyyy.M.d.Hmm))</Version>
-		<TargetFramework>net9.0-windows</TargetFramework>
+		<TargetFramework>net10.0-windows</TargetFramework>
 
 	</PropertyGroup>
 
