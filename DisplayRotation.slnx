@@ -1,9 +1,11 @@
-<Solution>
+﻿<Solution>
   <Folder Name="/Solution Items/">
     <File Path=".editorconfig" />
     <File Path="Directory.Build.props" />
     <File Path="Directory.Packages.props" />
   </Folder>
-  <Project Path="DisplayRotation.Avalonia/DisplayRotation.Avalonia.csproj" />
-  <Project Path="DisplayRotation.Core/DisplayRotation.Core.csproj" />
+  <Folder Name="/src/">
+    <Project Path="src/DisplayRotation.Avalonia/DisplayRotation.Avalonia.csproj" />
+    <Project Path="src/DisplayRotation.Core/DisplayRotation.Core.csproj" />
+  </Folder>
 </Solution>

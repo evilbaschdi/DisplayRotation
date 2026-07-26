@@ -1,0 +1,64 @@
+<!-- ReSharper disable once Xaml.PathError -->
+<windowing:FAAppWindow xmlns="https://github.com/avaloniaui"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       xmlns:windowing="clr-namespace:FluentAvalonia.UI.Windowing;assembly=FluentAvalonia"
+                       xmlns:avalonia="clr-namespace:EvilBaschdi.About.Avalonia;assembly=EvilBaschdi.About.Avalonia"
+                       xmlns:viewModels="clr-namespace:DisplayRotation.Avalonia.ViewModels"
+                       mc:Ignorable="d" Width="500" Height="250"
+                       x:Class="DisplayRotation.Avalonia.MainWindow"
+                       x:DataType="viewModels:MainWindowViewModel"
+                       Title="DisplayRotation"
+                       Icon="/Assets/plainicon.ico"
+                       ShowAsDialog="True">
+
+    <Panel Name="RootPanel">
+
+        <Panel Name="TitleBarPanel" Height="30" VerticalAlignment="Top" Margin="0,0,0,0">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Spacing="8" Margin="8,0">
+                <!-- App Icon -->
+                <Image Source="{Binding Icon, RelativeSource={RelativeSource AncestorType=windowing:FAAppWindow}}" Width="20" Height="20" VerticalAlignment="Center" />
+                <!-- App Title -->
+                <TextBlock Text="DisplayRotation" />
+            </StackPanel>
+        </Panel>
+
+        <Panel Name="MainPanel" Margin="0,30,0,7">
+            <Grid RowDefinitions="*,46">
+                <Panel Grid.Row="0" Name="ContentPanel" Margin="0">
+                    <Panel Name="OrientationPanel">
+                        <!-- Clockwise -->
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
+                            <Button x:Name="BtnClockwise" Margin="10,10,0,0" Height="30" Width="150" Click="BtnClockwiseOnClick">
+                                <StackPanel Orientation="Horizontal">
+                                    <!--<iconPacks:PackIconMaterial Kind="ChevronRight" Width="16" Height="16" HorizontalAlignment="Center" VerticalAlignment="Center" />-->
+                                    <TextBlock Margin="5 0 0 0" VerticalAlignment="Center" Text="👉 Clockwise 👉" />
+                                </StackPanel>
+                            </Button>
+                            <!-- Anticlockwise -->
+                            <Button x:Name="BtnAntiClockwise" Margin="10,10,0,0" Height="30" Width="150" Click="BtnAnticlockwiseOnClick">
+                                <StackPanel Orientation="Horizontal">
+                                    <!--<iconPacks:PackIconMaterial Kind="ChevronLeft" Width="16" Height="16" HorizontalAlignment="Center" VerticalAlignment="Center" />-->
+                                    <TextBlock Margin="5 0 0 0" VerticalAlignment="Center" Text="👈 Anticlockwise 👈" />
+                                </StackPanel>
+                            </Button>
+                            <!-- Reset -->
+                            <Button x:Name="BtnReset" Margin="10,10,0,0" Height="30" Width="150" Click="BtnResetOnClick">
+                                <StackPanel Orientation="Horizontal">
+                                    <!--<iconPacks:PackIconMaterial Kind="ChevronDown" Width="16" Height="16" HorizontalAlignment="Center" VerticalAlignment="Center" />-->
+                                    <TextBlock Margin="5 0 0 0" VerticalAlignment="Center" Text="👆 Reset 👆" />
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </Panel>
+                    <Panel Name="DisplayPanel" Margin="0,42,0,0">
+                        <!-- Display Buttons -->
+                        <StackPanel x:Name="DisplayStackPanel" Margin="0,10,0,0" Orientation="Horizontal" />
+                    </Panel>
+                </Panel>
+                <avalonia:AboutFooter Grid.Row="1" />
+            </Grid>
+        </Panel>
+    </Panel>
+</windowing:FAAppWindow>

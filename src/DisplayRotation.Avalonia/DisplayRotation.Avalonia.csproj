@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<ApplicationIcon>Assets\plainicon.ico</ApplicationIcon>
+		<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+		<OutputType>WinExe</OutputType>
+		<!--Avalonia doesen't support TrimMode=link currently,but we are working on that https://github.com/AvaloniaUI/Avalonia/issues/6892 -->
+		<TrimMode>copyused</TrimMode>
+		<AvaloniaUseCompiledBindingsByDefault>false</AvaloniaUseCompiledBindingsByDefault>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<!--This helps with theme dll-s trimming.
+	If you will publish your application in self-contained mode with p:PublishTrimmed=true and it will use Fluent theme Default theme will be trimmed from the output and vice versa.
+	https://github.com/AvaloniaUI/Avalonia/issues/5593 -->
+		<TrimmableAssembly Include="Avalonia.Themes.Fluent" />
+		<TrimmableAssembly Include="Avalonia.Themes.Default" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="EvilBaschdi.About.Avalonia" />
+		<PackageReference Include="EvilBaschdi.Core" />
+		<PackageReference Include="EvilBaschdi.Core.Avalonia" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<AvaloniaResource Include="Assets\**" />
+		<Content Include="Assets\about.png">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Resource Include="Assets\plainicon.ico">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Resource>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\DisplayRotation.Core\DisplayRotation.Core.csproj" />
+	</ItemGroup>
+
+</Project>

@@ -1,0 +1,21 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:styling="clr-namespace:FluentAvalonia.Styling;assembly=FluentAvalonia" x:Class="DisplayRotation.Avalonia.App">
+    <Application.Styles>
+        <styling:FluentAvaloniaTheme PreferSystemTheme="True" PreferUserAccentColor="True" />
+    </Application.Styles>
+
+    <TrayIcon.Icons>
+        <TrayIcons>
+            <TrayIcon Icon="/Assets/plainicon.ico" ToolTipText="DisplayRotation">
+                <TrayIcon.Menu>
+                    <NativeMenu>
+                        <NativeMenuItemSeparator Header="Separator" />
+                        <NativeMenuItem Header="Restore" Click="TrayIconMenuItemRestoreOnClick" />
+                        <NativeMenuItem Header="Exit" Click="TrayIconMenuItemExitOnClick" />
+                    </NativeMenu>
+                </TrayIcon.Menu>
+            </TrayIcon>
+        </TrayIcons>
+    </TrayIcon.Icons>
+</Application>

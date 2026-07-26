@@ -4,20 +4,14 @@
     <CentralPackageTransitivePinningEnabled>false</CentralPackageTransitivePinningEnabled>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="EvilBaschdi.About.Wpf" Version="2025.8.5.19" />
-    <PackageVersion Include="EvilBaschdi.Core" Version="2025.12.9.20" />
-    <PackageVersion Include="EvilBaschdi.Core.Wpf" Version="2025.8.10.13" />
-    <PackageVersion Include="Hardcodet.NotifyIcon.Wpf" Version="2.0.1" />
-    <PackageVersion Include="MahApps.Metro.IconPacks.Material" Version="6.1.0" />
-    <PackageVersion Include="MahApps.Metro.IconPacks.MaterialDesign" Version="6.1.0" />
-    <PackageVersion Include="System.Drawing.Common" Version="9.0.8" />
+    <PackageVersion Include="EvilBaschdi.Core" Version="2026.6.18.15" />
+    <PackageVersion Include="System.Drawing.Common" Version="10.0.5" />
     <PackageVersion Include="WpfAnalyzers" Version="4.1.1" />
   </ItemGroup>
   <ItemGroup>
-    <PackageVersion Include="Avalonia.Diagnostics" Version="11.3.11" />
-    <PackageVersion Include="EvilBaschdi.About.Avalonia" Version="2026.1.13.18" />
-    <PackageVersion Include="EvilBaschdi.Core.Avalonia" Version="2026.1.27.17" />
-    <PackageVersion Include="EvilBaschdi.Core.DependencyInjection" Version="2025.7.9.16" />
-    <PackageVersion Include="EvilBaschdi.Core.Settings" Version="2025.7.9.16" />
+    <PackageVersion Include="EvilBaschdi.About.Avalonia" Version="2026.7.26.9" />
+    <PackageVersion Include="EvilBaschdi.Core.Avalonia" Version="2026.7.26.9" />
+    <PackageVersion Include="EvilBaschdi.Core.DependencyInjection" Version="2026.3.12.17" />
+    <PackageVersion Include="EvilBaschdi.Core.Settings" Version="2026.3.12.17" />
   </ItemGroup>
 </Project>
