@@ -1,4 +1,4 @@
-﻿namespace DisplayRotation.Core;
+namespace DisplayRotation.Core;
 
 /// <inheritdoc />
 /// <summary>

@@ -1,4 +1,4 @@
-﻿using Avalonia;
+using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using EvilBaschdi.About.Avalonia;
 using EvilBaschdi.Core.Avalonia.DependencyInjection;

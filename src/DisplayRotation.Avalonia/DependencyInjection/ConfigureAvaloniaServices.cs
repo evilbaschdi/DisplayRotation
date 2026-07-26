@@ -1,4 +1,4 @@
-﻿using EvilBaschdi.About.Core;
+using EvilBaschdi.About.Core;
 using EvilBaschdi.Core.Avalonia.Helpers;
 using Microsoft.Extensions.DependencyInjection;
 

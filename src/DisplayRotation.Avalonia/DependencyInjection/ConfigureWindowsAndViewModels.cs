@@ -1,4 +1,4 @@
-﻿using DisplayRotation.Avalonia.ViewModels;
+using DisplayRotation.Avalonia.ViewModels;
 using EvilBaschdi.About.Avalonia;
 using EvilBaschdi.About.Avalonia.Models;
 using Microsoft.Extensions.DependencyInjection;
