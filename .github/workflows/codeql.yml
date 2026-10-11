@@ -9,7 +9,7 @@ on:
 jobs:
   analyze:
     name: Analyze (csharp)
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     permissions:
       security-events: write
       packages: read
